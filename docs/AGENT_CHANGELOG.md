@@ -564,3 +564,22 @@ Registro operativo de sesiones para continuidad entre agentes.
   - El smoke real con integracion ChileCompra aun depende de credenciales y comportamiento externo.
 - **Siguiente paso recomendado:**
   - Repetir smoke en preprod real y comparar diferencias de score/warmup frente al modo mock local.
+
+## 2026-04-14 - Frontend Flutter bootstrap inicial
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** avanzar en el frente cliente sin bloquearse por credenciales preprod.
+- **Cambios principales:**
+  - Se creo carpeta `frontend/` con `pubspec.yaml`, `analysis_options.yaml` y `lib/main.dart`.
+  - Se implemento pantalla bootstrap para probar `health`, `company/profile` y `tenders` contra backend local.
+  - Se agrego `frontend/README.md` con pasos de ejecucion y variables esperadas.
+- **Archivos clave:**
+  - `frontend/pubspec.yaml`
+  - `frontend/lib/main.dart`
+  - `frontend/README.md`
+  - `.gitignore`
+- **Validacion:**
+  - Verificacion de estructura y dependencias base del proyecto Flutter.
+- **Riesgos/pendientes:**
+  - SDK Flutter local bloqueado por ownership en `/opt/homebrew/share/flutter` (error `dubious ownership`).
+- **Siguiente paso recomendado:**
+  - Resolver setup local del SDK Flutter y ejecutar `flutter pub get && flutter run` en `frontend/`.
