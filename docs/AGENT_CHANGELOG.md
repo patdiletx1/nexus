@@ -346,3 +346,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - NXS-010 queda bloqueado hasta definir visibilidad/plan para branch protection.
 - **Siguiente paso recomendado:**
   - Decidir: upgrade plan o repo publico; luego rerun de `./scripts/setup_github_enforcement.sh`.
+
+## 2026-04-14 - NXS-010 fase 4 (enforcement remoto aplicado)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cerrar definitivamente NXS-010 tras resolver bloqueo de branch protection.
+- **Cambios principales:**
+  - Se actualizo visibilidad del repo a publico para habilitar protection por plan.
+  - Se aplico branch protection en `main` con check requerido `backend-go-tests`.
+  - Se actualizaron documentos de estado marcando NXS-010 en `done`.
+- **Archivos clave:**
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+  - `docs/NXS-010_REMOTE_ENFORCEMENT.md`
+  - `docs/AGENT_CHANGELOG.md`
+- **Validacion:**
+  - Script `./scripts/setup_github_enforcement.sh nexus public` ejecutado con resultado exitoso.
+  - Verificacion repo `patdiletx1/nexus` en visibilidad publica.
+- **Riesgos/pendientes:**
+  - Pendiente principal desplazado a validacion E2E con credenciales reales de proveedores.
+- **Siguiente paso recomendado:**
+  - Ejecutar plan E2E controlado y documentar resultados contra criterios de pre-produccion.

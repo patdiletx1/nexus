@@ -4,14 +4,14 @@
 - **Fase:** Sprint 2 (backend/radar en construccion).
 - **Backend Go:** funcional y probado en Docker (`go test ./...`).
 - **DB/RLS:** base multi-tenant implementada con migraciones.
-- **Repo remoto:** creado en `github.com/patdiletx1/nexus` y `main` publicado.
+- **Repo remoto:** `github.com/patdiletx1/nexus` (publico) con branch protection activa en `main`.
 
 ## Estado Sprint 2 (historias)
 - **NXS-006 (Radar ChileCompra):** `done` (pendiente validacion final con credenciales reales).
 - **NXS-007 (Score inicial):** `done`.
 - **NXS-008 (Hardening documental):** `done`.
 - **NXS-009 (Observabilidad SRE-lite):** `done` (metricas + alertas + dashboard + playbook).
-- **NXS-010 (CI/CD y quality gate):** `in_progress` (workflow CI y convencion release/changelog implementados).
+- **NXS-010 (CI/CD y quality gate):** `done` (CI + release convention + required checks en remoto).
 
 ## Hecho (resumen tecnico)
 - Base API: auth JWT, health checks, logging con request id.
@@ -29,7 +29,6 @@
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
-- CI/CD con gate formal en remoto (branch protection bloqueado por plan en repo privado).
 - Frontend Flutter (aun no abordado en este repo).
 
 ## Endpoints relevantes ya disponibles
@@ -48,4 +47,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Elegir estrategia para cerrar NXS-010 remoto: upgrade de plan o cambiar repo a publico, luego rerun `./scripts/setup_github_enforcement.sh`.
+Iniciar bloque de validacion E2E con credenciales reales (Supabase/Gemini/ChileCompra) y criterios de salida de pre-produccion.
