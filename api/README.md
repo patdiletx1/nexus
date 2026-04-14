@@ -152,3 +152,7 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
 - Test de clasificacion de errores del pipeline: `go test ./internal/vault -run TestClassifyProcessingError -v`
 - Dataset de campos clave: `api/testdata/vault_key_fields_dataset.json`
 - Test de cobertura campos clave + umbral inicial (80%): `go test ./internal/vault -run TestKeyFieldsCoverageDataset -v`
+
+## Validacion E2E preproduccion
+- Script smoke: `api/scripts/e2e_preprod_smoke.sh`
+- Checklist/criterios: `docs/E2E_PREPROD_VALIDATION.md`

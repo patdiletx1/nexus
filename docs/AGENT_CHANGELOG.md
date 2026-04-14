@@ -422,3 +422,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Ajustar limite maximo segun observabilidad real de latencia/carga.
 - **Siguiente paso recomendado:**
   - Exponer recomendacion de lote en frontend y agregar retry/backoff por batch.
+
+## 2026-04-14 - E2E preprod validation pack
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** habilitar ejecucion guiada de validacion real con credenciales externas.
+- **Cambios principales:**
+  - Se agrego script smoke para validar health/profile/sync/warmup/score contra entorno real.
+  - Se agrego checklist de preproduccion con criterios de salida y evidencia requerida.
+  - Se enlazo el paquete E2E en handoff/status/README para continuidad operativa.
+- **Archivos clave:**
+  - `api/scripts/e2e_preprod_smoke.sh`
+  - `docs/E2E_PREPROD_VALIDATION.md`
+  - `docs/AGENT_HANDOFF_INDEX.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `api/README.md`
+- **Validacion:**
+  - Validacion sintactica del script (`bash -n`).
+- **Riesgos/pendientes:**
+  - La corrida depende de credenciales y datos reales del entorno.
+- **Siguiente paso recomendado:**
+  - Ejecutar smoke en staging/preprod y adjuntar evidencia en changelog tecnico.
