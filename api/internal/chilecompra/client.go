@@ -25,6 +25,44 @@ func (NoopClient) FetchTenders(_ context.Context, _ *time.Time, _ int) ([]tender
 	return nil, ErrNotConfigured
 }
 
+type MockClient struct{}
+
+func (MockClient) FetchTenders(_ context.Context, _ *time.Time, limit int) ([]tenders.Tender, error) {
+	if limit <= 0 {
+		limit = 50
+	}
+	if limit > 200 {
+		limit = 200
+	}
+	base := []tenders.Tender{
+		{
+			ExternalID:  "MOCK-001",
+			Title:       "Servicio mantenimiento electrico mock",
+			Description: "Servicio de mantenimiento preventivo para instalaciones electricas.",
+			Region:      "Metropolitana",
+			Source:      "chilecompra-mock",
+		},
+		{
+			ExternalID:  "MOCK-002",
+			Title:       "Suministro de equipos de seguridad mock",
+			Description: "Provision e instalacion de equipos de seguridad industrial.",
+			Region:      "Valparaiso",
+			Source:      "chilecompra-mock",
+		},
+		{
+			ExternalID:  "MOCK-003",
+			Title:       "Servicio de limpieza industrial mock",
+			Description: "Contrato de limpieza industrial para planta productiva.",
+			Region:      "Biobio",
+			Source:      "chilecompra-mock",
+		},
+	}
+	if limit < len(base) {
+		return base[:limit], nil
+	}
+	return base, nil
+}
+
 type APIClient struct {
 	BaseURL     string
 	APIKey      string

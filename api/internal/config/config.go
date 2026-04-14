@@ -21,6 +21,7 @@ type Config struct {
 	ChileCompraBaseURL                string
 	ChileCompraAPIKey                 string
 	ChileCompraTendersPath            string
+	ChileCompraMockEnabled            bool
 	TenderScoreCacheTTLSeconds        int
 	AlertHTTPErrorRatePercent         float64
 	AlertVaultTimeoutPercent          float64
@@ -44,6 +45,7 @@ func Load() Config {
 		ChileCompraBaseURL:                os.Getenv("CHILECOMPRA_BASE_URL"),
 		ChileCompraAPIKey:                 os.Getenv("CHILECOMPRA_API_KEY"),
 		ChileCompraTendersPath:            getOrDefault("CHILECOMPRA_TENDERS_PATH", "/servicios/v1/publico/licitaciones.json"),
+		ChileCompraMockEnabled:            getBoolOrDefault("CHILECOMPRA_MOCK_ENABLED", false),
 		TenderScoreCacheTTLSeconds:        getIntOrDefault("TENDER_SCORE_CACHE_TTL_SECONDS", 900),
 		AlertHTTPErrorRatePercent:         getFloatOrDefault("ALERT_HTTP_ERROR_RATE_PERCENT", 5),
 		AlertVaultTimeoutPercent:          getFloatOrDefault("ALERT_VAULT_TIMEOUT_PERCENT", 20),
@@ -85,6 +87,18 @@ func getFloatOrDefault(key string, fallback float64) float64 {
 		return fallback
 	}
 	parsed, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return fallback
+	}
+	return parsed
+}
+
+func getBoolOrDefault(key string, fallback bool) bool {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+	parsed, err := strconv.ParseBool(value)
 	if err != nil {
 		return fallback
 	}

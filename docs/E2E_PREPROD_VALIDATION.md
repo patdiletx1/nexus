@@ -27,6 +27,13 @@ export EVIDENCE_BASENAME="preprod_smoke"
 
 El script guarda evidencia JSON automaticamente en `${EVIDENCE_DIR}/${EVIDENCE_BASENAME}_<timestamp>.json`, incluyendo snapshot de `GET /metrics` y `GET /v1/ops/alerts`.
 
+### Modo local sin credenciales ChileCompra
+Para pruebas locales de flujo completo (`sync -> list -> warmup -> score`) puedes levantar backend con:
+- `SUPABASE_JWT_SECRET=local-dev-secret`
+- `CHILECOMPRA_MOCK_ENABLED=true`
+
+Este modo usa licitaciones mock y permite validar E2E tecnico sin dependencias externas.
+
 ## Que valida el smoke
 1. Health endpoints (`/health/live`, `/health/ready`)
 2. Acceso autenticado a `company/profile`

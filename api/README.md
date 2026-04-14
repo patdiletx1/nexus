@@ -19,6 +19,7 @@ Copiar `.env.example` y ajustar valores:
 - `CHILECOMPRA_BASE_URL` (opcional; activa cliente real Radar)
 - `CHILECOMPRA_API_KEY` (opcional)
 - `CHILECOMPRA_TENDERS_PATH` (opcional)
+- `CHILECOMPRA_MOCK_ENABLED` (opcional; `true` habilita tenders mock para desarrollo local)
 - `TENDER_SCORE_CACHE_TTL_SECONDS` (opcional; default 900)
 - `ALERT_HTTP_ERROR_RATE_PERCENT` (opcional; default 5)
 - `ALERT_VAULT_TIMEOUT_PERCENT` (opcional; default 20)
@@ -126,6 +127,8 @@ curl -X POST http://localhost:8080/v1/vault/process \
 Nota: si configuras `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, el endpoint de upload intentara generar signed URL real en Supabase Storage. Si no estan definidos, usa signer placeholder.
 
 Si configuras `DATABASE_URL`, la API intenta usar Postgres como store de boveda. Si la conexion falla, cae automaticamente a in-memory store.
+
+Si no tienes credenciales ChileCompra en local, puedes setear `CHILECOMPRA_MOCK_ENABLED=true` para que `GET /v1/tenders/sync` cargue un set de licitaciones mock y permita validar scoring/warmup end-to-end.
 
 Si configuras `GEMINI_API_KEY`, el procesamiento usa Gemini para clasificacion y texto extraido. Para `image/*`, `audio/*` y `application/pdf` se adjunta contenido binario (inline_data) con limite de tamano. Si no esta configurado, usa extractor simulado.
 Con `GEMINI_API_KEY` activo, el pipeline usa matriz de fallback por familia documental: `gemini -> simulated -> manual_review_required` para `pdf/image/audio`.

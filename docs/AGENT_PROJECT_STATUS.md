@@ -20,6 +20,7 @@
 - Auditoria: eventos por item con filtros, cursor compuesto y paginacion robusta.
 - Idempotencia: `Idempotency-Key` en process/retry + cleanup de expiradas.
 - Radar base: sync/list de tenders con cliente ChileCompra configurable.
+- Modo local para Radar: `CHILECOMPRA_MOCK_ENABLED=true` habilita tenders mock para smoke E2E sin credenciales externas.
 - Scoring inicial: endpoint de score explicable + perfil persistente por empresa + cache de score.
 - Warmup de score cache: `POST /v1/tenders/score/warmup` para precalentar cache por empresa.
 - Observabilidad de warmup: metricas de `runs/processed/hits/writes/skipped` en `/metrics`.
@@ -35,6 +36,7 @@
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
 - Frontend Flutter (aun no abordado en este repo).
 - Ejecutar smoke E2E real con `api/scripts/e2e_preprod_smoke.sh`.
+- Smoke E2E local full validado con cliente mock (pendiente equivalente con ChileCompra real).
 - Guardar evidencia de corrida en JSON (default `./artifacts/e2e/*.json`) y verificar `responses.metrics` + `responses.ops_alerts`.
 
 ## Endpoints relevantes ya disponibles

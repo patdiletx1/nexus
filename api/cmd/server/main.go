@@ -99,6 +99,8 @@ func main() {
 			APIKey:      cfg.ChileCompraAPIKey,
 			TendersPath: cfg.ChileCompraTendersPath,
 		}
+	} else if cfg.ChileCompraMockEnabled {
+		chileCompraClient = chilecompra.MockClient{}
 	}
 	metricsCollector := observability.NewMetrics()
 

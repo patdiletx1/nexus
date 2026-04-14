@@ -23,3 +23,17 @@ func TestParseTendersFromDataEnvelope(t *testing.T) {
 		t.Fatalf("unexpected parsed tender: %+v", items[0])
 	}
 }
+
+func TestMockClientFetchTendersRespectsLimit(t *testing.T) {
+	client := MockClient{}
+	items, err := client.FetchTenders(nil, nil, 2)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(items) != 2 {
+		t.Fatalf("expected 2 items, got %d", len(items))
+	}
+	if items[0].ExternalID == "" || items[1].ExternalID == "" {
+		t.Fatalf("expected mock tenders with external ids, got %+v", items)
+	}
+}
