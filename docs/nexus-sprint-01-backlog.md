@@ -256,7 +256,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Dashboard compartible para monitoreo diario.
 
 #### NXS-010 - CI/CD y gate de calidad
-**Estado:** `next`  
+**Estado:** `in_progress` (workflow CI + release/changelog convention implementados; falta enforcement remoto)  
 **Prioridad:** Media  
 **Dependencias:** NXS-002
 

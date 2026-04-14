@@ -283,3 +283,25 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Ajustar umbrales con telemetria real una vez disponible trafico productivo.
 - **Siguiente paso recomendado:**
   - Iniciar NXS-010 con CI obligatorio y convencion de release/changelog tecnico.
+
+## 2026-04-14 - NXS-010 fase 1 (CI + release convention)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** iniciar quality gate formal para merges y trazabilidad tecnica por iteracion.
+- **Cambios principales:**
+  - Se agrego workflow CI para ejecutar tests Go en Docker en `push`/`pull_request`.
+  - Se agrego plantilla de Pull Request con checklist de validacion.
+  - Se agrego convencion de release y changelog tecnico base.
+- **Archivos clave:**
+  - `.github/workflows/ci.yml`
+  - `.github/pull_request_template.md`
+  - `docs/NXS-010_RELEASE_CONVENTION.md`
+  - `docs/TECH_CHANGELOG.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+  - `api/README.md`
+- **Validacion:**
+  - Revisión estática de flujo CI y consistencia documental de gates.
+- **Riesgos/pendientes:**
+  - Falta configurar branch protection/checks requeridos en remoto.
+- **Siguiente paso recomendado:**
+  - Aplicar required checks y politica de merge en el repositorio remoto.

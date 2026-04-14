@@ -34,6 +34,11 @@ make docker-go-tidy
 make docker-go-test
 ```
 
+## CI/CD (NXS-010 fase 1)
+- Workflow CI: `.github/workflows/ci.yml`
+- Gate minimo: tests Go en Docker para `push` a `main` y `pull_request`.
+- Convencion release/changelog: `docs/NXS-010_RELEASE_CONVENTION.md` y `docs/TECH_CHANGELOG.md`.
+
 ## Endpoints base
 - `GET /health/live`
 - `GET /health/ready`

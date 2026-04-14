@@ -10,7 +10,7 @@
 - **NXS-007 (Score inicial):** `done`.
 - **NXS-008 (Hardening documental):** `done`.
 - **NXS-009 (Observabilidad SRE-lite):** `done` (metricas + alertas + dashboard + playbook).
-- **NXS-010 (CI/CD y quality gate):** `next`.
+- **NXS-010 (CI/CD y quality gate):** `in_progress` (workflow CI y convencion release/changelog implementados).
 
 ## Hecho (resumen tecnico)
 - Base API: auth JWT, health checks, logging con request id.
@@ -28,7 +28,7 @@
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
-- CI/CD con gates formales para merge/release.
+- CI/CD con gate formal en remoto (branch protection + required checks).
 - Frontend Flutter (aun no abordado en este repo).
 
 ## Endpoints relevantes ya disponibles
@@ -47,4 +47,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Iniciar NXS-010: pipeline CI obligatorio con test en Docker y plantilla de release/changelog tecnico por iteracion.
+Cerrar NXS-010 con politica de branch protection/checks requeridos en remoto y checklist de release operacional.

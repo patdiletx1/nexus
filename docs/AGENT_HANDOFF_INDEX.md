@@ -10,8 +10,10 @@ Usa este archivo como punto de entrada para cualquier agente nuevo.
 5. `docs/nexus-sprint-01-backlog.md` (backlog y prioridades)
 6. `docs/ops/NXS-009_DASHBOARD_MINIMO.md` (operacion diaria de observabilidad)
 7. `docs/ops/NXS-009_ALERT_PLAYBOOK.md` (respuesta ante alertas)
-8. `docs/nexus-blueprint-agente.md` (vision completa y arquitectura)
-9. `rdf.md` (PRD negocio original)
+8. `docs/NXS-010_RELEASE_CONVENTION.md` (flujo de CI/release)
+9. `docs/TECH_CHANGELOG.md` (changelog tecnico por iteracion)
+10. `docs/nexus-blueprint-agente.md` (vision completa y arquitectura)
+11. `rdf.md` (PRD negocio original)
 
 ## Prompt sugerido para arrancar con otro agente
 ```text
