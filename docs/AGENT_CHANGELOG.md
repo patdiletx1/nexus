@@ -305,3 +305,24 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta configurar branch protection/checks requeridos en remoto.
 - **Siguiente paso recomendado:**
   - Aplicar required checks y politica de merge en el repositorio remoto.
+
+## 2026-04-14 - NXS-010 fase 2 (remote enforcement automation)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** preparar cierre de NXS-010 ante bloqueo por falta de autenticacion `gh`.
+- **Cambios principales:**
+  - Se agrego script ejecutable para crear repo remoto y aplicar branch protection/checks.
+  - Se agrego guia rapida de enforcement remoto con pasos de validacion.
+  - Se actualizaron docs de estado para indicar paso operativo exacto pendiente.
+- **Archivos clave:**
+  - `scripts/setup_github_enforcement.sh`
+  - `docs/NXS-010_REMOTE_ENFORCEMENT.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+  - `docs/AGENT_HANDOFF_INDEX.md`
+  - `api/README.md`
+- **Validacion:**
+  - Verificacion de prerequisito `gh auth status`: actualmente sin sesion iniciada.
+- **Riesgos/pendientes:**
+  - Sin login de GitHub no se puede aplicar protection en remoto.
+- **Siguiente paso recomendado:**
+  - Ejecutar `gh auth login` y correr `./scripts/setup_github_enforcement.sh nexus private`.

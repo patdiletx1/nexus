@@ -38,6 +38,7 @@ make docker-go-test
 - Workflow CI: `.github/workflows/ci.yml`
 - Gate minimo: tests Go en Docker para `push` a `main` y `pull_request`.
 - Convencion release/changelog: `docs/NXS-010_RELEASE_CONVENTION.md` y `docs/TECH_CHANGELOG.md`.
+- Enforcement remoto (branch protection/checks): `docs/NXS-010_REMOTE_ENFORCEMENT.md` y `scripts/setup_github_enforcement.sh`.
 
 ## Endpoints base
 - `GET /health/live`

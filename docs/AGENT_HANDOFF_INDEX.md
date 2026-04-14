@@ -12,8 +12,9 @@ Usa este archivo como punto de entrada para cualquier agente nuevo.
 7. `docs/ops/NXS-009_ALERT_PLAYBOOK.md` (respuesta ante alertas)
 8. `docs/NXS-010_RELEASE_CONVENTION.md` (flujo de CI/release)
 9. `docs/TECH_CHANGELOG.md` (changelog tecnico por iteracion)
-10. `docs/nexus-blueprint-agente.md` (vision completa y arquitectura)
-11. `rdf.md` (PRD negocio original)
+10. `docs/NXS-010_REMOTE_ENFORCEMENT.md` (branch protection/checks en remoto)
+11. `docs/nexus-blueprint-agente.md` (vision completa y arquitectura)
+12. `rdf.md` (PRD negocio original)
 
 ## Prompt sugerido para arrancar con otro agente
 ```text

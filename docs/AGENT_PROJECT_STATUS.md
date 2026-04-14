@@ -47,4 +47,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Cerrar NXS-010 con politica de branch protection/checks requeridos en remoto y checklist de release operacional.
+Ejecutar `gh auth login` y luego `./scripts/setup_github_enforcement.sh nexus private` para cerrar NXS-010 en remoto.
