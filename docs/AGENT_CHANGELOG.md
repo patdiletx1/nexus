@@ -709,3 +709,21 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Parse depende de formato de respuesta actual (`alerts[]`), requiere ajuste si cambia contrato API.
 - **Siguiente paso recomendado:**
   - Extraer modelo `OpsAlert` compartido en `models/` y reutilizarlo en futuras pantallas Ops.
+
+## 2026-04-14 - OpsAlert model + sorting prioritario
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** consolidar logica de parse/sorting de alertas para escalar frontend Ops sin duplicacion.
+- **Cambios principales:**
+  - Se agrego `frontend/lib/models/ops_alert.dart` como modelo reusable de alertas operativas.
+  - Parse de `ops alerts` movido desde `HomePage` al modelo.
+  - Se aplico orden de prioridad: `triggered` primero, luego severidad `critical > warning > otros`.
+- **Archivos clave:**
+  - `frontend/lib/models/ops_alert.dart`
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+- **Validacion:**
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Si cambia contrato de `/v1/ops/alerts`, se debe ajustar parser del modelo.
+- **Siguiente paso recomendado:**
+  - Agregar test unitario de `OpsAlert.fromFormattedResponse` con casos de orden y payload invalido.
