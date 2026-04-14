@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 import "../services/nexus_api_client.dart";
 import "../widgets/response_card.dart";
@@ -11,6 +12,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String _baseUrlKey = "nexus.base_url";
+  static const String _jwtTokenKey = "nexus.jwt_token";
+  static const String _tenderIdKey = "nexus.tender_id";
+
   final NexusApiClient _client = const NexusApiClient();
   final TextEditingController _baseUrlController = TextEditingController(
     text: "http://localhost:8080",
@@ -28,9 +33,49 @@ class _HomePageState extends State<HomePage> {
   String _scoreResponse = "";
   String _errorMessage = "";
   bool _loading = false;
+  bool _loadingSavedInputs = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _baseUrlController.addListener(_persistInputs);
+    _tokenController.addListener(_persistInputs);
+    _tenderIdController.addListener(_persistInputs);
+    _loadPersistedInputs();
+  }
+
+  Future<void> _loadPersistedInputs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? savedBaseUrl = prefs.getString(_baseUrlKey);
+    final String? savedToken = prefs.getString(_jwtTokenKey);
+    final String? savedTenderId = prefs.getString(_tenderIdKey);
+    if (!mounted) return;
+    setState(() {
+      if ((savedBaseUrl ?? "").trim().isNotEmpty) {
+        _baseUrlController.text = savedBaseUrl!.trim();
+      }
+      if ((savedToken ?? "").isNotEmpty) {
+        _tokenController.text = savedToken!;
+      }
+      if ((savedTenderId ?? "").trim().isNotEmpty) {
+        _tenderIdController.text = savedTenderId!.trim();
+      }
+      _loadingSavedInputs = false;
+    });
+  }
+
+  Future<void> _persistInputs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_baseUrlKey, _baseUrlController.text.trim());
+    await prefs.setString(_jwtTokenKey, _tokenController.text);
+    await prefs.setString(_tenderIdKey, _tenderIdController.text.trim());
+  }
 
   @override
   void dispose() {
+    _baseUrlController.removeListener(_persistInputs);
+    _tokenController.removeListener(_persistInputs);
+    _tenderIdController.removeListener(_persistInputs);
     _baseUrlController.dispose();
     _tokenController.dispose();
     _tenderIdController.dispose();
@@ -82,6 +127,11 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: <Widget>[
+            if (_loadingSavedInputs)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: LinearProgressIndicator(),
+              ),
             TextField(
               controller: _baseUrlController,
               decoration: const InputDecoration(
