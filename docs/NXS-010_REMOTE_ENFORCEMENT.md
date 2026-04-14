@@ -4,10 +4,7 @@ Guia rapida para cerrar NXS-010 en remoto.
 
 ## Estado actual
 - CI local y workflow listos.
-- Falta enforcement en GitHub:
-  - required checks en `main`,
-  - PR reviews obligatorias,
-  - merge directo deshabilitado por politica.
+- Enforcement remoto aplicado en `main` del repo `patdiletx1/nexus`.
 
 ## Paso 1: Autenticacion GitHub CLI
 ```bash
@@ -45,3 +42,8 @@ Si aparece error `403 Upgrade to GitHub Pro...`:
 1. Crear PR de prueba.
 2. Verificar que merge quede bloqueado hasta pasar `backend-go-tests`.
 3. Verificar solicitud de review obligatoria.
+
+## Resultado actual
+- Repo: `https://github.com/patdiletx1/nexus`
+- Visibilidad: publica
+- Branch protection: activa en `main`
