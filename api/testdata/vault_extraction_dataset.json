@@ -1,0 +1,44 @@
+[
+  {
+    "name": "pdf presupuesto por nombre",
+    "file_name": "presupuesto_obra_hospital.pdf",
+    "mime_type": "application/pdf",
+    "expected_doc_type": "presupuesto"
+  },
+  {
+    "name": "certificado por nombre",
+    "file_name": "certificado_iso_9001.pdf",
+    "mime_type": "application/pdf",
+    "expected_doc_type": "certificado"
+  },
+  {
+    "name": "plano por nombre",
+    "file_name": "plano_electrico_planta_baja.png",
+    "mime_type": "image/png",
+    "expected_doc_type": "plano"
+  },
+  {
+    "name": "factura por nombre",
+    "file_name": "factura_enero_2026.pdf",
+    "mime_type": "application/pdf",
+    "expected_doc_type": "factura"
+  },
+  {
+    "name": "audio fallback",
+    "file_name": "nota_voz_cliente.mp3",
+    "mime_type": "audio/mpeg",
+    "expected_doc_type": "audio_nota"
+  },
+  {
+    "name": "imagen fallback",
+    "file_name": "foto_documento.jpg",
+    "mime_type": "image/jpeg",
+    "expected_doc_type": "documento_imagen"
+  },
+  {
+    "name": "pdf fallback sin palabra clave",
+    "file_name": "adjunto_licitacion.pdf",
+    "mime_type": "application/pdf",
+    "expected_doc_type": "documento_pdf"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "name": "completo formato chileno",
+    "text": "Razon social: Constructora Sur SpA\nMonto: $2.500.000,00\nFecha: 25/03/2026",
+    "expected_amount": "$2.500.000,00",
+    "expected_date": "2026-03-25",
+    "expected_company_name": "Constructora Sur SpA"
+  },
+  {
+    "name": "completo formato iso",
+    "text": "Empresa: Inversiones Norte Ltda.\nTotal Oferta $980.000,00\nCierre 2026-05-01",
+    "expected_amount": "$980.000,00",
+    "expected_date": "2026-05-01",
+    "expected_company_name": "Inversiones Norte Ltda."
+  },
+  {
+    "name": "sin monto",
+    "text": "Proveedor: Soluciones Delta\nFecha documento: 10/04/2026",
+    "expected_amount": "",
+    "expected_date": "2026-04-10",
+    "expected_company_name": "Soluciones Delta"
+  },
+  {
+    "name": "sin razon social",
+    "text": "Monto total $1.100.000,00\nFecha 2026-06-11",
+    "expected_amount": "$1.100.000,00",
+    "expected_date": "2026-06-11",
+    "expected_company_name": ""
+  },
+  {
+    "name": "sin fecha",
+    "text": "Razon social: Servicios Andes\nMonto total $350.000,00",
+    "expected_amount": "$350.000,00",
+    "expected_date": "",
+    "expected_company_name": "Servicios Andes"
+  }
+]
