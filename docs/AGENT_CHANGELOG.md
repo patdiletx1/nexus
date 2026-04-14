@@ -583,3 +583,19 @@ Registro operativo de sesiones para continuidad entre agentes.
   - SDK Flutter local bloqueado por ownership en `/opt/homebrew/share/flutter` (error `dubious ownership`).
 - **Siguiente paso recomendado:**
   - Resolver setup local del SDK Flutter y ejecutar `flutter pub get && flutter run` en `frontend/`.
+
+## 2026-04-14 - Script helper para JWT local
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** simplificar pruebas frontend/backend en local sin regenerar JWT manualmente cada vez.
+- **Cambios principales:**
+  - Se agrego `scripts/gen_local_jwt.sh` para emitir JWT HS256 compatible con `SUPABASE_JWT_SECRET`.
+  - Se documento uso rapido y override de claims en `frontend/README.md`.
+- **Archivos clave:**
+  - `scripts/gen_local_jwt.sh`
+  - `frontend/README.md`
+- **Validacion:**
+  - Script ejecutable y generacion de token por consola.
+- **Riesgos/pendientes:**
+  - Token local es solo para entorno de desarrollo con `local-dev-secret`.
+- **Siguiente paso recomendado:**
+  - Consumir helper en flujo frontend para autofill de token en modo local.

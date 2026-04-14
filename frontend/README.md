@@ -19,3 +19,10 @@ Frontend Flutter inicial para validar integracion local con backend Nexus.
 - `SUPABASE_JWT_SECRET=local-dev-secret`
 - `CHILECOMPRA_MOCK_ENABLED=true`
 - API en `http://localhost:8080`
+
+## JWT local rapido
+Desde raiz del repo:
+- `export JWT_TOKEN="$(./scripts/gen_local_jwt.sh)"`
+
+Tambien puedes customizar claims:
+- `JWT_COMPANY_ID=company-local-99 JWT_SUB=user-x ./scripts/gen_local_jwt.sh`
