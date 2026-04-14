@@ -4,6 +4,7 @@
 - **Fase:** Sprint 2 (backend/radar en construccion).
 - **Backend Go:** funcional y probado en Docker (`go test ./...`).
 - **DB/RLS:** base multi-tenant implementada con migraciones.
+- **Repo remoto:** creado en `github.com/patdiletx1/nexus` y `main` publicado.
 
 ## Estado Sprint 2 (historias)
 - **NXS-006 (Radar ChileCompra):** `done` (pendiente validacion final con credenciales reales).
@@ -28,7 +29,7 @@
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
-- CI/CD con gate formal en remoto (branch protection + required checks).
+- CI/CD con gate formal en remoto (branch protection bloqueado por plan en repo privado).
 - Frontend Flutter (aun no abordado en este repo).
 
 ## Endpoints relevantes ya disponibles
@@ -47,4 +48,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Ejecutar `gh auth login` y luego `./scripts/setup_github_enforcement.sh nexus private` para cerrar NXS-010 en remoto.
+Elegir estrategia para cerrar NXS-010 remoto: upgrade de plan o cambiar repo a publico, luego rerun `./scripts/setup_github_enforcement.sh`.

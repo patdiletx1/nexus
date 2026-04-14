@@ -34,6 +34,13 @@ Parametros:
   - conversation resolution obligatoria
   - force push y deletions deshabilitados
 
+## Limitacion conocida (GitHub plan)
+En algunos planes, `branch protection` no esta disponible para repos privados.
+
+Si aparece error `403 Upgrade to GitHub Pro...`:
+1. Upgrade de plan para habilitar protection en privados, o
+2. Cambiar el repo a publico y rerun del script.
+
 ## Validacion final
 1. Crear PR de prueba.
 2. Verificar que merge quede bloqueado hasta pasar `backend-go-tests`.

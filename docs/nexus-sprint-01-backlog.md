@@ -256,7 +256,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Dashboard compartible para monitoreo diario.
 
 #### NXS-010 - CI/CD y gate de calidad
-**Estado:** `in_progress` (workflow CI + release/changelog + script de enforcement remoto listos; falta auth/politica aplicada en GitHub)  
+**Estado:** `blocked` (repo remoto creado, pero branch protection en privado bloqueado por plan GitHub)  
 **Prioridad:** Media  
 **Dependencias:** NXS-002
 
@@ -271,6 +271,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 ### Bloqueadores actuales
 - Credenciales reales de Supabase y Gemini para pruebas E2E completas.
 - Confirmacion de estrategia final de consumo ChileCompra (limites/cuotas/retries).
+- Definir si repo `nexus` se mantiene privado con upgrade de plan o se vuelve publico para habilitar branch protection.
 
 ### Plan de ejecucion recomendado (proximo)
 1. NXS-010

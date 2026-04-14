@@ -39,6 +39,7 @@ make docker-go-test
 - Gate minimo: tests Go en Docker para `push` a `main` y `pull_request`.
 - Convencion release/changelog: `docs/NXS-010_RELEASE_CONVENTION.md` y `docs/TECH_CHANGELOG.md`.
 - Enforcement remoto (branch protection/checks): `docs/NXS-010_REMOTE_ENFORCEMENT.md` y `scripts/setup_github_enforcement.sh`.
+- Nota: en repo privado, branch protection puede requerir plan GitHub con esa capacidad.
 
 ## Endpoints base
 - `GET /health/live`

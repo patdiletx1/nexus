@@ -326,3 +326,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Sin login de GitHub no se puede aplicar protection en remoto.
 - **Siguiente paso recomendado:**
   - Ejecutar `gh auth login` y correr `./scripts/setup_github_enforcement.sh nexus private`.
+
+## 2026-04-14 - NXS-010 fase 3 (repo remoto creado, protection bloqueada)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** ejecutar cierre remoto real tras login GitHub CLI.
+- **Cambios principales:**
+  - Se creo repositorio remoto `github.com/patdiletx1/nexus` y se publico `main`.
+  - Intento de branch protection devolvio `403` por limitacion de plan en repo privado.
+  - Se robustecio script para reportar esta condicion y sugerir opciones de salida.
+- **Archivos clave:**
+  - `scripts/setup_github_enforcement.sh`
+  - `docs/NXS-010_REMOTE_ENFORCEMENT.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+- **Validacion:**
+  - `gh auth status` valido.
+  - ejecucion de script con creacion remota exitosa y evidencia de bloqueo en protection.
+- **Riesgos/pendientes:**
+  - NXS-010 queda bloqueado hasta definir visibilidad/plan para branch protection.
+- **Siguiente paso recomendado:**
+  - Decidir: upgrade plan o repo publico; luego rerun de `./scripts/setup_github_enforcement.sh`.

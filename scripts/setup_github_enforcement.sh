@@ -32,7 +32,8 @@ fi
 
 OWNER_REPO="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
 echo "Configuring branch protection on ${OWNER_REPO}:${DEFAULT_BRANCH}"
-
+set +e
+PROTECTION_OUTPUT="$(
 gh api --method PUT "repos/${OWNER_REPO}/branches/${DEFAULT_BRANCH}/protection" \
   --input - <<EOF
 {
@@ -56,6 +57,20 @@ gh api --method PUT "repos/${OWNER_REPO}/branches/${DEFAULT_BRANCH}/protection" 
   "allow_fork_syncing": true
 }
 EOF
+)"
+PROTECTION_EXIT_CODE=$?
+set -e
+
+if [ ${PROTECTION_EXIT_CODE} -ne 0 ]; then
+  echo "Could not apply branch protection automatically."
+  echo "${PROTECTION_OUTPUT}"
+  echo
+  echo "Common cause: private repo in a plan that does not include branch protection."
+  echo "Options:"
+  echo "  1) Upgrade GitHub plan with branch protection support for private repos"
+  echo "  2) Change repository visibility to public and rerun this script"
+  exit ${PROTECTION_EXIT_CODE}
+fi
 
 echo "Branch protection configured successfully."
 echo "Required check: ${REQUIRED_CHECK}"
