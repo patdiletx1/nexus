@@ -146,6 +146,7 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
   - `http_error_rate_high` (warning)
   - `vault_timeout_rate_high` (warning)
   - `vault_inflight_high` (critical)
+  - `tenders_warmup_skipped_ratio_high` (warning)
 - Dashboard compartible:
   - `docs/ops/NXS-009_DASHBOARD_MINIMO.md`
   - `docs/ops/NXS-009_grafana_dashboard.json`

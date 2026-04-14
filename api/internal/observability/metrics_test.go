@@ -47,14 +47,16 @@ func TestEvaluateAlerts(t *testing.T) {
 	m.IncVaultInflight()
 	m.IncVaultInflight()
 	m.IncVaultInflight()
+	m.RecordTenderWarmup("profile", "targeted_ids", 10, 6, 4, 5)
 
 	alerts := m.EvaluateAlerts(AlertThresholds{
-		HTTPErrorRatePercent: 10,
-		VaultTimeoutPercent:  30,
-		VaultInflightMax:     2,
+		HTTPErrorRatePercent:      10,
+		VaultTimeoutPercent:       30,
+		VaultInflightMax:          2,
+		WarmupSkippedRatioPercent: 30,
 	})
-	if len(alerts) != 3 {
-		t.Fatalf("expected 3 alerts, got %d", len(alerts))
+	if len(alerts) != 4 {
+		t.Fatalf("expected 4 alerts, got %d", len(alerts))
 	}
 	if !alerts[0].Triggered {
 		t.Fatal("expected http error rate alert to trigger")
@@ -64,5 +66,8 @@ func TestEvaluateAlerts(t *testing.T) {
 	}
 	if !alerts[2].Triggered {
 		t.Fatal("expected inflight alert to trigger")
+	}
+	if !alerts[3].Triggered {
+		t.Fatal("expected warmup skipped ratio alert to trigger")
 	}
 }
