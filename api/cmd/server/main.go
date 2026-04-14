@@ -14,6 +14,7 @@ import (
 	"nexus/api/internal/config"
 	httpserver "nexus/api/internal/http"
 	"nexus/api/internal/idempotency"
+	"nexus/api/internal/observability"
 	"nexus/api/internal/storage"
 	"nexus/api/internal/tenders"
 	"nexus/api/internal/vault"
@@ -99,6 +100,7 @@ func main() {
 			TendersPath: cfg.ChileCompraTendersPath,
 		}
 	}
+	metricsCollector := observability.NewMetrics()
 
 	router := httpserver.NewRouter(httpserver.RouterConfig{
 		JWTSecret:           cfg.SupabaseJWTSecret,
@@ -113,6 +115,7 @@ func main() {
 		CompanyProfileStore: companyProfileStore,
 		TenderScoreCache:    tenderScoreCache,
 		TenderScoreCacheTTL: time.Duration(cfg.TenderScoreCacheTTLSeconds) * time.Second,
+		Metrics:             metricsCollector,
 	})
 
 	if cfg.IdempotencyCleanupIntervalSeconds > 0 {

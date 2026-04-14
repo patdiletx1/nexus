@@ -16,6 +16,7 @@ import (
 
 	"nexus/api/internal/audit"
 	"nexus/api/internal/idempotency"
+	"nexus/api/internal/observability"
 	"nexus/api/internal/storage"
 	"nexus/api/internal/vault"
 )
@@ -38,6 +39,7 @@ type VaultHandler struct {
 	Extractor   vault.Extractor
 	Audit       audit.Service
 	Idempotency idempotency.Service
+	Metrics     *observability.Metrics
 }
 
 type uploadRequest struct {
@@ -526,6 +528,7 @@ func (h VaultHandler) startProcessing(itemID, companyID, userID, startedEventTyp
 						"document_family": vault.DocumentFamily(currentItem.MimeType),
 					},
 				})
+				h.Metrics.RecordVaultProcessing("failed", vault.DocumentFamily(currentItem.MimeType), errorDetails.Category)
 				log.Printf(
 					"vault_process_failed item_id=%s stage=%s category=%s retryable=%t error=%s",
 					currentItem.ID,
@@ -561,6 +564,7 @@ func (h VaultHandler) startProcessing(itemID, companyID, userID, startedEventTyp
 					"document_family": vault.DocumentFamily(currentItem.MimeType),
 				},
 			})
+			h.Metrics.RecordVaultProcessing("failed", vault.DocumentFamily(currentItem.MimeType), errorDetails.Category)
 			log.Printf(
 				"vault_process_failed item_id=%s stage=%s category=%s retryable=%t error=%s",
 				currentItem.ID,
@@ -597,6 +601,7 @@ func (h VaultHandler) startProcessing(itemID, companyID, userID, startedEventTyp
 				"missing_key_fields": missingKeyFields,
 			},
 		})
+		h.Metrics.RecordVaultProcessing("processed", vault.DocumentFamily(currentItem.MimeType), "")
 		log.Printf("vault_processed item_id=%s document_type=%s", currentItem.ID, documentType)
 	}(item)
 

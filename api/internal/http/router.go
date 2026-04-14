@@ -11,6 +11,7 @@ import (
 	"nexus/api/internal/http/handlers"
 	"nexus/api/internal/http/middleware"
 	"nexus/api/internal/idempotency"
+	"nexus/api/internal/observability"
 	"nexus/api/internal/storage"
 	"nexus/api/internal/tenders"
 	"nexus/api/internal/vault"
@@ -29,6 +30,7 @@ type RouterConfig struct {
 	CompanyProfileStore companyprofile.Store
 	TenderScoreCache    tenders.ScoreCache
 	TenderScoreCacheTTL time.Duration
+	Metrics             *observability.Metrics
 }
 
 func NewRouter(cfg RouterConfig) http.Handler {
@@ -36,6 +38,14 @@ func NewRouter(cfg RouterConfig) http.Handler {
 
 	mux.HandleFunc("GET /health/live", handlers.Liveness)
 	mux.HandleFunc("GET /health/ready", handlers.Readiness)
+	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, _ *http.Request) {
+		if cfg.Metrics == nil {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain; version=0.0.4")
+		_, _ = w.Write([]byte(cfg.Metrics.RenderPrometheus()))
+	})
 
 	authenticated := middleware.RequireAuth(middleware.AuthConfig{
 		JWTSecret: cfg.JWTSecret,
@@ -50,6 +60,7 @@ func NewRouter(cfg RouterConfig) http.Handler {
 		Extractor:   cfg.Extractor,
 		Audit:       cfg.Audit,
 		Idempotency: cfg.Idempotency,
+		Metrics:     cfg.Metrics,
 	}
 	tendersHandler := handlers.TendersHandler{
 		Store:         cfg.TendersStore,
@@ -75,14 +86,15 @@ func NewRouter(cfg RouterConfig) http.Handler {
 	mux.Handle("GET /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Get)))
 	mux.Handle("PUT /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Upsert)))
 
-	return middleware.WithRequestID(withRequestLogging(mux))
+	return middleware.WithRequestID(withRequestLogging(mux, cfg.Metrics))
 }
 
-func withRequestLogging(next http.Handler) http.Handler {
+func withRequestLogging(next http.Handler, metrics *observability.Metrics) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startedAt := time.Now()
 		rec := &statusRecorder{ResponseWriter: w, statusCode: http.StatusOK}
 		next.ServeHTTP(rec, r)
+		durationMs := time.Since(startedAt).Milliseconds()
 
 		requestID := middleware.RequestIDFromContext(r.Context())
 		log.Printf(
@@ -91,8 +103,9 @@ func withRequestLogging(next http.Handler) http.Handler {
 			r.Method,
 			r.URL.Path,
 			rec.statusCode,
-			time.Since(startedAt).Milliseconds(),
+			durationMs,
 		)
+		metrics.RecordHTTPRequest(r.Method, r.URL.Path, rec.statusCode, durationMs)
 	})
 }
 

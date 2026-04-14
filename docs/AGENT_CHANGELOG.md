@@ -215,3 +215,26 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Ajustar estrategia final con data real de precision/costos por proveedor en ambiente productivo.
 - **Siguiente paso recomendado:**
   - Iniciar NXS-009 con metricas y alertas sobre errores y timeouts del pipeline.
+
+## 2026-04-14 - NXS-009 fase 1 (metricas base)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** iniciar observabilidad operativa con senales minimas de latencia y fallos.
+- **Cambios principales:**
+  - Se implemento colector in-memory de metricas con salida Prometheus (`GET /metrics`).
+  - Se agrego instrumentacion HTTP (requests totales + suma/conteo de latencia).
+  - Se agregaron metricas de pipeline de boveda por resultado/familia/error.
+- **Archivos clave:**
+  - `api/internal/observability/metrics.go`
+  - `api/internal/observability/metrics_test.go`
+  - `api/internal/http/router.go`
+  - `api/internal/http/handlers/vault.go`
+  - `api/cmd/server/main.go`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+- **Validacion:**
+  - Tests unitarios de render Prometheus y suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Faltan alertas automáticas y dashboard para cierre completo de NXS-009.
+- **Siguiente paso recomendado:**
+  - Definir umbrales de alerta (error_rate/timeout/backlog) y playbook de respuesta.

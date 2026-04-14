@@ -37,6 +37,7 @@ make docker-go-test
 ## Endpoints base
 - `GET /health/live`
 - `GET /health/ready`
+- `GET /metrics` (metricas Prometheus texto plano)
 - `GET /v1/protected` (requiere Bearer JWT)
 - `POST /v1/vault/upload` (requiere Bearer JWT)
 - `POST /v1/vault/process` (requiere Bearer JWT, solo estado uploaded)
@@ -109,6 +110,14 @@ Si configuras `GEMINI_API_KEY`, el procesamiento usa Gemini para clasificacion y
 Con `GEMINI_API_KEY` activo, el pipeline usa matriz de fallback por familia documental: `gemini -> simulated -> manual_review_required` para `pdf/image/audio`.
 
 Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /v1/vault/process` intenta leer el objeto real desde Storage antes de extraer contenido.
+
+## Observabilidad minima (NXS-009 fase 1)
+- Metricas HTTP:
+  - `nexus_http_requests_total`
+  - `nexus_http_request_duration_ms_sum`
+  - `nexus_http_request_duration_ms_count`
+- Metricas pipeline boveda:
+  - `nexus_vault_processing_total` (labels: `result`, `document_family`, `error_category`)
 
 ## Evaluacion base de calidad documental (NXS-008)
 - Dataset mini: `api/testdata/vault_extraction_dataset.json`

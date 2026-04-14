@@ -242,7 +242,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Errores clasificados por tipo y accion de fallback.
 
 #### NXS-009 - Observabilidad SRE-lite (metricas + alertas)
-**Estado:** `next`  
+**Estado:** `in_progress` (metricas base expuestas en `/metrics`, faltan alertas y dashboard)  
 **Prioridad:** Media-Alta  
 **Dependencias:** NXS-005
 

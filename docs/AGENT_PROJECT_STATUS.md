@@ -8,8 +8,8 @@
 ## Estado Sprint 2 (historias)
 - **NXS-006 (Radar ChileCompra):** `done` (pendiente validacion final con credenciales reales).
 - **NXS-007 (Score inicial):** `done`.
-- **NXS-008 (Hardening documental):** `next`.
-- **NXS-009 (Observabilidad SRE-lite):** `next`.
+- **NXS-008 (Hardening documental):** `done`.
+- **NXS-009 (Observabilidad SRE-lite):** `in_progress` (metricas base HTTP y pipeline boveda implementadas).
 - **NXS-010 (CI/CD y quality gate):** `next`.
 
 ## Hecho (resumen tecnico)
@@ -48,4 +48,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Iniciar NXS-009: metricas por endpoint/pipeline y alertas base (error_rate, timeout procesamiento, backlog worker).
+Completar NXS-009 con alertas operativas (error_rate, timeout procesamiento, backlog worker) y playbook de respuesta.
