@@ -20,10 +20,13 @@ type TendersHandler struct {
 	ScoreCacheTTL time.Duration
 }
 
+const maxWarmupTargetIDs = 200
+
 type scoreWarmupRequest struct {
 	Limit           int      `json:"limit"`
 	CompanyRegion   string   `json:"company_region"`
 	CompanyKeywords []string `json:"company_keywords"`
+	TenderIDs       []string `json:"tender_ids"`
 }
 
 func (h TendersHandler) Sync(w http.ResponseWriter, r *http.Request) {
@@ -176,13 +179,19 @@ func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request)
 	if len(profileKeywords) == 0 {
 		profileKeywords = parseKeywords(r.URL.Query().Get("company_keywords"))
 	}
+	tenderIDs := req.TenderIDs
+	if len(tenderIDs) == 0 {
+		tenderIDs = parseKeywords(r.URL.Query().Get("tender_ids"))
+	}
+	normalizedTargetIDs, skippedIDs := normalizeWarmupTargetIDs(tenderIDs, maxWarmupTargetIDs)
 	companyRegion, keywords, profileSource := h.resolveScoreInputs(
 		companyID,
 		strings.TrimSpace(req.CompanyRegion),
 		profileKeywords,
 	)
 	fingerprint := tenders.BuildProfileFingerprint(companyRegion, keywords)
-	items := h.Store.ListByCompany(companyID, limit)
+	items, unresolvedIDs := h.resolveWarmupTenders(companyID, limit, normalizedTargetIDs)
+	skippedIDs = append(skippedIDs, unresolvedIDs...)
 	if h.ScoreCache == nil {
 		h.ScoreCache = tenders.NoopScoreCache{}
 	}
@@ -212,12 +221,58 @@ func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request)
 		"cache_hits":      cacheHits,
 		"cache_writes":    cachedWrites,
 		"limit":           limit,
+		"targeted_ids":    normalizedTargetIDs,
+		"skipped_ids":     skippedIDs,
 		"inputs": map[string]any{
 			"company_region":   companyRegion,
 			"company_keywords": keywords,
 			"profile_source":   profileSource,
 		},
 	})
+}
+
+func (h TendersHandler) resolveWarmupTenders(companyID string, limit int, tenderIDs []string) ([]tenders.Tender, []string) {
+	if len(tenderIDs) == 0 {
+		return h.Store.ListByCompany(companyID, limit), nil
+	}
+	out := make([]tenders.Tender, 0, len(tenderIDs))
+	skipped := make([]string, 0)
+	for _, externalID := range tenderIDs {
+		if item, ok := h.Store.GetByExternalID(companyID, externalID); ok {
+			out = append(out, item)
+			continue
+		}
+		skipped = append(skipped, externalID)
+	}
+	return out, skipped
+}
+
+func normalizeWarmupTargetIDs(rawIDs []string, maxIDs int) ([]string, []string) {
+	if maxIDs <= 0 {
+		maxIDs = maxWarmupTargetIDs
+	}
+
+	out := make([]string, 0, len(rawIDs))
+	skipped := make([]string, 0)
+	seen := map[string]struct{}{}
+	for _, rawID := range rawIDs {
+		id := strings.TrimSpace(rawID)
+		if id == "" {
+			continue
+		}
+		if len(out) >= maxIDs {
+			skipped = append(skipped, id)
+			continue
+		}
+		if _, exists := seen[id]; exists {
+			skipped = append(skipped, id)
+			continue
+		}
+		seen[id] = struct{}{}
+		out = append(out, id)
+	}
+
+	return out, skipped
 }
 
 func (h TendersHandler) resolveScoreInputs(companyID, companyRegion string, keywords []string) (string, []string, string) {

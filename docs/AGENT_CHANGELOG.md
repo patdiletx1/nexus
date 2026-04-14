@@ -386,3 +386,39 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Pendiente medir impacto real de warmup en latencia de listados con trafico productivo.
 - **Siguiente paso recomendado:**
   - Integrar llamada de warmup en flujo frontend al entrar al radar.
+
+## 2026-04-14 - Warmup selectivo por tender IDs
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** permitir precalentado de cache dirigido para lotes pequenos del frontend.
+- **Cambios principales:**
+  - Warmup ahora acepta `tender_ids` para procesar solo licitaciones especificas.
+  - Se agrega deduplicacion de IDs y omision de IDs inexistentes.
+  - Se agregan tests para validar comportamiento de targeting.
+- **Archivos clave:**
+  - `api/internal/http/handlers/tenders.go`
+  - `api/internal/http/handlers/tenders_test.go`
+  - `api/README.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Medir estrategia optima de lotes (N IDs por llamada) segun trafico real.
+- **Siguiente paso recomendado:**
+  - Definir tamano de lote recomendado y policy de reintento en frontend.
+
+## 2026-04-14 - Warmup hardening (max IDs + skipped_ids)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** robustecer warmup selectivo para uso seguro en frontend.
+- **Cambios principales:**
+  - Se agrega limite maximo de `200` IDs objetivo por request.
+  - Se reportan IDs omitidos en `skipped_ids` (duplicados, exceso y no encontrados).
+  - Se agregan tests para limite y reporte de omitidos.
+- **Archivos clave:**
+  - `api/internal/http/handlers/tenders.go`
+  - `api/internal/http/handlers/tenders_test.go`
+  - `api/README.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Ajustar limite maximo segun observabilidad real de latencia/carga.
+- **Siguiente paso recomendado:**
+  - Exponer recomendacion de lote en frontend y agregar retry/backoff por batch.
