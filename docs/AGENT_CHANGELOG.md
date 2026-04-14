@@ -692,3 +692,20 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Resumen de metricas usa filtro textual; puede ajustarse si cambian nombres de metricas.
 - **Siguiente paso recomendado:**
   - Agregar vista tabular simple para alerts con estado (`triggered`) y severidad.
+
+## 2026-04-14 - Ops alerts visual panel
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** mejorar legibilidad operativa del frontend sin depender solo de JSON raw.
+- **Cambios principales:**
+  - Se agrego parse de respuesta `GET /v1/ops/alerts` para renderizar panel visual.
+  - Cada alerta muestra nombre, severidad y estado (`ok`/`triggered`) con chips de color.
+  - Se mantiene card de JSON crudo para troubleshooting detallado.
+- **Archivos clave:**
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+- **Validacion:**
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Parse depende de formato de respuesta actual (`alerts[]`), requiere ajuste si cambia contrato API.
+- **Siguiente paso recomendado:**
+  - Extraer modelo `OpsAlert` compartido en `models/` y reutilizarlo en futuras pantallas Ops.
