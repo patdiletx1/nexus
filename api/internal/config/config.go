@@ -22,6 +22,10 @@ type Config struct {
 	ChileCompraAPIKey                 string
 	ChileCompraTendersPath            string
 	TenderScoreCacheTTLSeconds        int
+	AlertHTTPErrorRatePercent         float64
+	AlertVaultTimeoutPercent          float64
+	AlertVaultInflightMax             int64
+	AlertWarmupSkippedRatioPercent    float64
 }
 
 func Load() Config {
@@ -41,6 +45,10 @@ func Load() Config {
 		ChileCompraAPIKey:                 os.Getenv("CHILECOMPRA_API_KEY"),
 		ChileCompraTendersPath:            getOrDefault("CHILECOMPRA_TENDERS_PATH", "/servicios/v1/publico/licitaciones.json"),
 		TenderScoreCacheTTLSeconds:        getIntOrDefault("TENDER_SCORE_CACHE_TTL_SECONDS", 900),
+		AlertHTTPErrorRatePercent:         getFloatOrDefault("ALERT_HTTP_ERROR_RATE_PERCENT", 5),
+		AlertVaultTimeoutPercent:          getFloatOrDefault("ALERT_VAULT_TIMEOUT_PERCENT", 20),
+		AlertVaultInflightMax:             int64(getIntOrDefault("ALERT_VAULT_INFLIGHT_MAX", 10)),
+		AlertWarmupSkippedRatioPercent:    getFloatOrDefault("ALERT_WARMUP_SKIPPED_RATIO_PERCENT", 30),
 	}
 
 	return cfg
@@ -65,6 +73,18 @@ func getIntOrDefault(key string, fallback int) int {
 		return fallback
 	}
 	parsed, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+	return parsed
+}
+
+func getFloatOrDefault(key string, fallback float64) float64 {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+	parsed, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		return fallback
 	}

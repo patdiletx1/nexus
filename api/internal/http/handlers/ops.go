@@ -7,11 +7,12 @@ import (
 )
 
 type OpsHandler struct {
-	Metrics *observability.Metrics
+	Metrics    *observability.Metrics
+	Thresholds observability.AlertThresholds
 }
 
 func (h OpsHandler) Alerts(w http.ResponseWriter, _ *http.Request) {
-	alerts := h.Metrics.EvaluateAlerts(observability.AlertThresholds{})
+	alerts := h.Metrics.EvaluateAlerts(h.Thresholds)
 	writeJSON(w, http.StatusOK, map[string]any{
 		"alerts": alerts,
 	})
