@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -173,6 +175,97 @@ class _HomePageState extends State<HomePage> {
       _errorMessage = "JWT token requerido para esta accion";
     });
     return false;
+  }
+
+  List<_OpsAlertViewData> _parseOpsAlerts() {
+    if (_opsAlertsResponse.trim().isEmpty) {
+      return const <_OpsAlertViewData>[];
+    }
+    final List<String> lines = _opsAlertsResponse.split("\n");
+    if (lines.isEmpty || !lines.first.startsWith("HTTP 200")) {
+      return const <_OpsAlertViewData>[];
+    }
+    final String jsonRaw = lines.skip(1).join("\n").trim();
+    if (jsonRaw.isEmpty) {
+      return const <_OpsAlertViewData>[];
+    }
+    try {
+      final Map<String, dynamic> payload = jsonDecode(jsonRaw) as Map<String, dynamic>;
+      final List<dynamic> alerts = payload["alerts"] as List<dynamic>? ?? const <dynamic>[];
+      return alerts
+          .whereType<Map<String, dynamic>>()
+          .map(
+            (Map<String, dynamic> alert) => _OpsAlertViewData(
+              name: (alert["name"] ?? "").toString(),
+              severity: (alert["severity"] ?? "").toString(),
+              triggered: alert["triggered"] == true,
+              description: (alert["description"] ?? "").toString(),
+            ),
+          )
+          .toList();
+    } catch (_) {
+      return const <_OpsAlertViewData>[];
+    }
+  }
+
+  Widget _buildOpsAlertsPanel() {
+    final List<_OpsAlertViewData> alerts = _parseOpsAlerts();
+    if (alerts.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              "Ops alerts overview",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            ...alerts.map((alert) {
+              final Color severityColor = switch (alert.severity.toLowerCase()) {
+                "critical" => Colors.red,
+                "warning" => Colors.orange,
+                _ => Colors.blueGrey,
+              };
+              final Color statusColor = alert.triggered ? Colors.red : Colors.green;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: <Widget>[
+                        Text(alert.name),
+                        Chip(
+                          label: Text(alert.severity),
+                          backgroundColor: severityColor.withAlpha(32),
+                          side: BorderSide(color: severityColor.withAlpha(100)),
+                        ),
+                        Chip(
+                          label: Text(alert.triggered ? "triggered" : "ok"),
+                          backgroundColor: statusColor.withAlpha(32),
+                          side: BorderSide(color: statusColor.withAlpha(100)),
+                        ),
+                      ],
+                    ),
+                    if (alert.description.isNotEmpty)
+                      Text(
+                        alert.description,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -376,6 +469,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 12),
             ResponseCard(title: "Score response", content: _scoreResponse),
             const SizedBox(height: 12),
+            _buildOpsAlertsPanel(),
+            const SizedBox(height: 12),
             ResponseCard(title: "Ops alerts response", content: _opsAlertsResponse),
             const SizedBox(height: 12),
             ResponseCard(title: "Metrics summary", content: _metricsResponse),
@@ -384,4 +479,18 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+class _OpsAlertViewData {
+  const _OpsAlertViewData({
+    required this.name,
+    required this.severity,
+    required this.triggered,
+    required this.description,
+  });
+
+  final String name;
+  final String severity;
+  final bool triggered;
+  final String description;
 }
