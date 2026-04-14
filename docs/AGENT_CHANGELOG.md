@@ -727,3 +727,20 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Si cambia contrato de `/v1/ops/alerts`, se debe ajustar parser del modelo.
 - **Siguiente paso recomendado:**
   - Agregar test unitario de `OpsAlert.fromFormattedResponse` con casos de orden y payload invalido.
+
+## 2026-04-14 - Unit tests para modelo OpsAlert
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cubrir regresiones en parse/sort de alertas operativas del frontend.
+- **Cambios principales:**
+  - Se agregaron tests de `OpsAlert.fromFormattedResponse` para:
+    - respuesta no `HTTP 200`,
+    - payload JSON invalido,
+    - orden de prioridad (`triggered` y severidad).
+- **Archivos clave:**
+  - `frontend/test/models/ops_alert_test.dart`
+- **Validacion:**
+  - `flutter test`
+- **Riesgos/pendientes:**
+  - Falta cobertura UI widget-level para panel visual de alerts.
+- **Siguiente paso recomendado:**
+  - Agregar test de widget para validar render de chips de severidad/estado en `HomePage`.
