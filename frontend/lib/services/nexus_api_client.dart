@@ -69,6 +69,46 @@ class NexusApiClient {
     );
   }
 
+  Future<String> getOpsAlerts({
+    required String baseUrl,
+    required String token,
+  }) {
+    return _get(
+      baseUrl: baseUrl,
+      path: "/v1/ops/alerts",
+      token: token,
+    );
+  }
+
+  Future<String> getMetricsSummary({
+    required String baseUrl,
+  }) async {
+    final String formatted = await _get(
+      baseUrl: baseUrl,
+      path: "/metrics",
+      token: null,
+    );
+    final List<String> segments = formatted.split("\n");
+    final String statusLine = segments.isEmpty ? "HTTP 0" : segments.first;
+    final String rawBody = segments.skip(1).join("\n");
+    if (!statusLine.startsWith("HTTP 200")) {
+      return formatted;
+    }
+    final List<String> lines = rawBody
+        .split("\n")
+        .where((line) =>
+            line.startsWith("nexus_http_requests_total") ||
+            line.startsWith("nexus_vault_inflight") ||
+            line.startsWith("nexus_tenders_warmup_runs_total") ||
+            line.startsWith("nexus_tenders_warmup_processed_total") ||
+            line.startsWith("nexus_tenders_warmup_cache_hits_total") ||
+            line.startsWith("nexus_tenders_warmup_cache_writes_total") ||
+            line.startsWith("nexus_tenders_warmup_skipped_total"))
+        .toList();
+    final String summary = lines.isEmpty ? rawBody : lines.join("\n");
+    return "$statusLine\n$summary";
+  }
+
   Future<String> _get({
     required String baseUrl,
     required String path,

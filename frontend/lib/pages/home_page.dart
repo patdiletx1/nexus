@@ -31,6 +31,8 @@ class _HomePageState extends State<HomePage> {
   String _tendersResponse = "";
   String _warmupResponse = "";
   String _scoreResponse = "";
+  String _opsAlertsResponse = "";
+  String _metricsResponse = "";
   String _errorMessage = "";
   bool _loading = false;
   bool _loadingSavedInputs = true;
@@ -88,6 +90,8 @@ class _HomePageState extends State<HomePage> {
       _tendersResponse = "";
       _warmupResponse = "";
       _scoreResponse = "";
+      _opsAlertsResponse = "";
+      _metricsResponse = "";
       _errorMessage = "";
     });
     ScaffoldMessenger.of(context).showSnackBar(
@@ -324,6 +328,32 @@ class _HomePageState extends State<HomePage> {
                         },
                   child: const Text("Score"),
                 ),
+                FilledButton(
+                  onPressed: _loading
+                      ? null
+                      : () {
+                          if (!_requireToken()) return;
+                          _run(
+                            action: () => _client.getOpsAlerts(
+                              baseUrl: _baseUrl,
+                              token: _token,
+                            ),
+                            onSuccess: (value) => _opsAlertsResponse = value,
+                          );
+                        },
+                  child: const Text("Ops Alerts"),
+                ),
+                FilledButton(
+                  onPressed: _loading
+                      ? null
+                      : () => _run(
+                            action: () => _client.getMetricsSummary(
+                              baseUrl: _baseUrl,
+                            ),
+                            onSuccess: (value) => _metricsResponse = value,
+                          ),
+                  child: const Text("Metrics"),
+                ),
               ],
             ),
             if (_errorMessage.isNotEmpty) ...<Widget>[
@@ -345,6 +375,10 @@ class _HomePageState extends State<HomePage> {
             ResponseCard(title: "Warmup response", content: _warmupResponse),
             const SizedBox(height: 12),
             ResponseCard(title: "Score response", content: _scoreResponse),
+            const SizedBox(height: 12),
+            ResponseCard(title: "Ops alerts response", content: _opsAlertsResponse),
+            const SizedBox(height: 12),
+            ResponseCard(title: "Metrics summary", content: _metricsResponse),
           ],
         ),
       ),

@@ -15,6 +15,8 @@ Frontend Flutter inicial para validar integracion local con backend Nexus.
   - `GET /v1/tenders?limit=20`
   - `POST /v1/tenders/score/warmup`
   - `GET /v1/tenders/{id}/score`
+  - `GET /v1/ops/alerts`
+  - `GET /metrics` (resumen clave)
 - Ingresar `Tender ID` para score directo (por defecto `MOCK-003`).
 
 ## Ejecutar en local

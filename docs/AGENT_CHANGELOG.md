@@ -674,3 +674,21 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Pendiente internacionalizacion si la app migra a UI bilingue.
 - **Siguiente paso recomendado:**
   - Agregar seccion `Ops` en frontend para visualizar `/v1/ops/alerts` y `/metrics` resumido.
+
+## 2026-04-14 - Seccion Ops en frontend local
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** ampliar validacion operativa desde UI sin depender de llamadas manuales por terminal.
+- **Cambios principales:**
+  - Se agregaron acciones `Ops Alerts` y `Metrics` en frontend.
+  - `Ops Alerts` consume `GET /v1/ops/alerts` con JWT.
+  - `Metrics` consume `GET /metrics` y muestra resumen de metricas clave (`http`, `vault_inflight`, `warmup`).
+- **Archivos clave:**
+  - `frontend/lib/services/nexus_api_client.dart`
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+- **Validacion:**
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Resumen de metricas usa filtro textual; puede ajustarse si cambian nombres de metricas.
+- **Siguiente paso recomendado:**
+  - Agregar vista tabular simple para alerts con estado (`triggered`) y severidad.
