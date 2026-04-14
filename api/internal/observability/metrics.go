@@ -16,6 +16,15 @@ type Metrics struct {
 
 	vaultProcessing map[string]int64
 	vaultInflight   int64
+	tenderWarmup    map[string]tenderWarmupCounter
+}
+
+type tenderWarmupCounter struct {
+	Runs        int64
+	Processed   int64
+	CacheHits   int64
+	CacheWrites int64
+	Skipped     int64
 }
 
 func NewMetrics() *Metrics {
@@ -25,6 +34,7 @@ func NewMetrics() *Metrics {
 		httpLatencyMsTotal: map[string]int64{},
 		vaultProcessing:    map[string]int64{},
 		vaultInflight:      0,
+		tenderWarmup:       map[string]tenderWarmupCounter{},
 	}
 }
 
@@ -77,6 +87,27 @@ func (m *Metrics) DecVaultInflight() {
 	if m.vaultInflight > 0 {
 		m.vaultInflight--
 	}
+}
+
+func (m *Metrics) RecordTenderWarmup(profileSource, targetMode string, processed, cacheHits, cacheWrites, skipped int) {
+	if m == nil {
+		return
+	}
+	key := fmt.Sprintf(
+		"profile_source=%s|target_mode=%s",
+		sanitizeLabel(profileSource),
+		sanitizeLabel(targetMode),
+	)
+
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	entry := m.tenderWarmup[key]
+	entry.Runs++
+	entry.Processed += int64(processed)
+	entry.CacheHits += int64(cacheHits)
+	entry.CacheWrites += int64(cacheWrites)
+	entry.Skipped += int64(skipped)
+	m.tenderWarmup[key] = entry
 }
 
 func (m *Metrics) RenderPrometheus() string {
@@ -141,6 +172,71 @@ func (m *Metrics) RenderPrometheus() string {
 	b.WriteString("# HELP nexus_vault_inflight Current in-flight vault processing jobs.\n")
 	b.WriteString("# TYPE nexus_vault_inflight gauge\n")
 	b.WriteString(fmt.Sprintf("nexus_vault_inflight %d\n", m.vaultInflight))
+
+	b.WriteString("# HELP nexus_tenders_warmup_runs_total Total warmup runs by input mode.\n")
+	b.WriteString("# TYPE nexus_tenders_warmup_runs_total counter\n")
+	for _, key := range sortedWarmupKeys(m.tenderWarmup) {
+		labels := parseLabels(key)
+		entry := m.tenderWarmup[key]
+		b.WriteString(fmt.Sprintf(
+			"nexus_tenders_warmup_runs_total{profile_source=\"%s\",target_mode=\"%s\"} %d\n",
+			labels["profile_source"],
+			labels["target_mode"],
+			entry.Runs,
+		))
+	}
+
+	b.WriteString("# HELP nexus_tenders_warmup_processed_total Total tenders processed in warmup.\n")
+	b.WriteString("# TYPE nexus_tenders_warmup_processed_total counter\n")
+	for _, key := range sortedWarmupKeys(m.tenderWarmup) {
+		labels := parseLabels(key)
+		entry := m.tenderWarmup[key]
+		b.WriteString(fmt.Sprintf(
+			"nexus_tenders_warmup_processed_total{profile_source=\"%s\",target_mode=\"%s\"} %d\n",
+			labels["profile_source"],
+			labels["target_mode"],
+			entry.Processed,
+		))
+	}
+
+	b.WriteString("# HELP nexus_tenders_warmup_cache_hits_total Total warmup cache hits.\n")
+	b.WriteString("# TYPE nexus_tenders_warmup_cache_hits_total counter\n")
+	for _, key := range sortedWarmupKeys(m.tenderWarmup) {
+		labels := parseLabels(key)
+		entry := m.tenderWarmup[key]
+		b.WriteString(fmt.Sprintf(
+			"nexus_tenders_warmup_cache_hits_total{profile_source=\"%s\",target_mode=\"%s\"} %d\n",
+			labels["profile_source"],
+			labels["target_mode"],
+			entry.CacheHits,
+		))
+	}
+
+	b.WriteString("# HELP nexus_tenders_warmup_cache_writes_total Total warmup cache writes.\n")
+	b.WriteString("# TYPE nexus_tenders_warmup_cache_writes_total counter\n")
+	for _, key := range sortedWarmupKeys(m.tenderWarmup) {
+		labels := parseLabels(key)
+		entry := m.tenderWarmup[key]
+		b.WriteString(fmt.Sprintf(
+			"nexus_tenders_warmup_cache_writes_total{profile_source=\"%s\",target_mode=\"%s\"} %d\n",
+			labels["profile_source"],
+			labels["target_mode"],
+			entry.CacheWrites,
+		))
+	}
+
+	b.WriteString("# HELP nexus_tenders_warmup_skipped_total Total warmup skipped IDs.\n")
+	b.WriteString("# TYPE nexus_tenders_warmup_skipped_total counter\n")
+	for _, key := range sortedWarmupKeys(m.tenderWarmup) {
+		labels := parseLabels(key)
+		entry := m.tenderWarmup[key]
+		b.WriteString(fmt.Sprintf(
+			"nexus_tenders_warmup_skipped_total{profile_source=\"%s\",target_mode=\"%s\"} %d\n",
+			labels["profile_source"],
+			labels["target_mode"],
+			entry.Skipped,
+		))
+	}
 
 	return b.String()
 }
@@ -237,6 +333,15 @@ func (m *Metrics) EvaluateAlerts(thresholds AlertThresholds) []Alert {
 }
 
 func sortedKeys(values map[string]int64) []string {
+	keys := make([]string, 0, len(values))
+	for key := range values {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func sortedWarmupKeys(values map[string]tenderWarmupCounter) []string {
 	keys := make([]string, 0, len(values))
 	for key := range values {
 		keys = append(keys, key)

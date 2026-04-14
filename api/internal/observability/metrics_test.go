@@ -10,6 +10,7 @@ func TestRenderPrometheusIncludesRecordedMetrics(t *testing.T) {
 	m.RecordHTTPRequest("GET", "/health/live", 200, 12)
 	m.RecordVaultProcessing("failed", "pdf", "timeout")
 	m.IncVaultInflight()
+	m.RecordTenderWarmup("profile", "targeted_ids", 10, 6, 4, 2)
 
 	rendered := m.RenderPrometheus()
 	if !strings.Contains(rendered, `nexus_http_requests_total{method="GET",path="/health/live",status="200"} 1`) {
@@ -23,6 +24,12 @@ func TestRenderPrometheusIncludesRecordedMetrics(t *testing.T) {
 	}
 	if !strings.Contains(rendered, `nexus_vault_inflight 1`) {
 		t.Fatalf("expected inflight metric, got:\n%s", rendered)
+	}
+	if !strings.Contains(rendered, `nexus_tenders_warmup_runs_total{profile_source="profile",target_mode="targeted_ids"} 1`) {
+		t.Fatalf("expected warmup runs metric, got:\n%s", rendered)
+	}
+	if !strings.Contains(rendered, `nexus_tenders_warmup_skipped_total{profile_source="profile",target_mode="targeted_ids"} 2`) {
+		t.Fatalf("expected warmup skipped metric, got:\n%s", rendered)
 	}
 }
 

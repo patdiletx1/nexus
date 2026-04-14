@@ -9,6 +9,7 @@ import (
 
 	"nexus/api/internal/chilecompra"
 	"nexus/api/internal/companyprofile"
+	"nexus/api/internal/observability"
 	"nexus/api/internal/tenders"
 )
 
@@ -18,6 +19,7 @@ type TendersHandler struct {
 	Profile       companyprofile.Store
 	ScoreCache    tenders.ScoreCache
 	ScoreCacheTTL time.Duration
+	Metrics       *observability.Metrics
 }
 
 const maxWarmupTargetIDs = 200
@@ -229,6 +231,18 @@ func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request)
 			"profile_source":   profileSource,
 		},
 	})
+	targetMode := "limit"
+	if len(normalizedTargetIDs) > 0 {
+		targetMode = "targeted_ids"
+	}
+	h.Metrics.RecordTenderWarmup(
+		profileSource,
+		targetMode,
+		processedCount,
+		cacheHits,
+		cachedWrites,
+		len(skippedIDs),
+	)
 }
 
 func (h TendersHandler) resolveWarmupTenders(companyID string, limit int, tenderIDs []string) ([]tenders.Tender, []string) {

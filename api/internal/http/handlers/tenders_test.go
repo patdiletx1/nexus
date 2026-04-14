@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"nexus/api/internal/chilecompra"
 	"nexus/api/internal/companyprofile"
+	"nexus/api/internal/observability"
 	"nexus/api/internal/tenders"
 )
 
@@ -334,5 +336,36 @@ func TestNormalizeWarmupTargetIDsRespectsMax(t *testing.T) {
 	}
 	if len(skipped) != 2 {
 		t.Fatalf("expected 2 skipped IDs due to max limit, got %d", len(skipped))
+	}
+}
+
+func TestTendersScoreWarmupRecordsMetrics(t *testing.T) {
+	tendersStore := tenders.NewInMemoryStore()
+	tendersStore.Upsert("company-1", tenders.Tender{
+		ExternalID:  "ext-warm-metrics",
+		Title:       "Servicio",
+		Description: "servicio",
+		Region:      "Biobio",
+		Source:      "chilecompra",
+	})
+	metrics := observability.NewMetrics()
+	handler := TendersHandler{
+		Store:         tendersStore,
+		ScoreCache:    tenders.NewInMemoryScoreCache(),
+		ScoreCacheTTL: 15 * time.Minute,
+		Metrics:       metrics,
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/v1/tenders/score/warmup?limit=1", nil)
+	req = req.WithContext(WithAuthContext(context.Background(), "user-1", "company-1", "member"))
+	rec := httptest.NewRecorder()
+	handler.WarmupScoreCache(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+
+	rendered := metrics.RenderPrometheus()
+	if !strings.Contains(rendered, `nexus_tenders_warmup_runs_total`) {
+		t.Fatalf("expected warmup runs metric in output, got:\n%s", rendered)
 	}
 }
