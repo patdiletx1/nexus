@@ -106,6 +106,7 @@ Nota: si configuras `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, el endpoint de
 Si configuras `DATABASE_URL`, la API intenta usar Postgres como store de boveda. Si la conexion falla, cae automaticamente a in-memory store.
 
 Si configuras `GEMINI_API_KEY`, el procesamiento usa Gemini para clasificacion y texto extraido. Para `image/*`, `audio/*` y `application/pdf` se adjunta contenido binario (inline_data) con limite de tamano. Si no esta configurado, usa extractor simulado.
+Con `GEMINI_API_KEY` activo, el pipeline usa matriz de fallback por familia documental: `gemini -> simulated -> manual_review_required` para `pdf/image/audio`.
 
 Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /v1/vault/process` intenta leer el objeto real desde Storage antes de extraer contenido.
 

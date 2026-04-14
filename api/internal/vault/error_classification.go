@@ -20,6 +20,9 @@ func ClassifyProcessingError(stage string, err error) ProcessingErrorDetails {
 	}
 
 	switch {
+	case containsAny(message, "manual_review_required"):
+		details.Category = "manual_review_required"
+		details.Retryable = false
 	case containsAny(message, "timeout", "deadline exceeded", "timed out"):
 		details.Category = "timeout"
 		details.Retryable = true

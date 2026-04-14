@@ -228,7 +228,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Test de regresion de scoring base.
 
 #### NXS-008 - Hardening de procesamiento documental
-**Estado:** `in_progress` (clasificacion de errores + dataset mini de doc_type y cobertura de campos clave implementados)  
+**Estado:** `done` (incluye matriz fallback `gemini -> simulated -> manual_review_required`)  
 **Prioridad:** Alta  
 **Dependencias:** NXS-003, NXS-004
 
@@ -273,6 +273,5 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Confirmacion de estrategia final de consumo ChileCompra (limites/cuotas/retries).
 
 ### Plan de ejecucion recomendado (proximo)
-1. NXS-008
-2. NXS-009
-3. NXS-010
+1. NXS-009
+2. NXS-010

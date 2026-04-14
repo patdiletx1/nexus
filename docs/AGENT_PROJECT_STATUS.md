@@ -23,6 +23,7 @@
 - Invalidacion de cache: al actualizar `company/profile`.
 - Hardening documental (parcial): clasificacion de errores (`error_stage`, `error_category`, `retryable`) y dataset mini con umbral inicial para `doc_type`.
 - Quality signals en procesamiento: extraccion de campos clave (`amount`, `date`, `company_name`) con cobertura base por dataset.
+- Fallback runtime documental: matriz por familia (`pdf/image/audio`) con flujo `gemini -> simulated -> manual_review_required`.
 
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
@@ -47,4 +48,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Cerrar NXS-008 con matriz de fallback por tipo documental/proveedor (primario/secundario/manual) y reporte operativo consolidado.
+Iniciar NXS-009: metricas por endpoint/pipeline y alertas base (error_rate, timeout procesamiento, backlog worker).

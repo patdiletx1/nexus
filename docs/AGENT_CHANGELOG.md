@@ -192,3 +192,26 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta matriz de fallback por proveedor/tipo documental para cierre de NXS-008.
 - **Siguiente paso recomendado:**
   - Definir estrategia de fallback primario/secundario/manual por tipo documental.
+
+## 2026-04-14 - NXS-008 fase 3 (fallback matrix runtime)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cerrar hardening documental con degradacion controlada por proveedor y tipo de documento.
+- **Cambios principales:**
+  - Se implemento extractor con matriz de fallback por familia documental.
+  - Para `pdf/image/audio` se aplica cadena `gemini -> simulated -> manual_review_required`.
+  - Se cableo la matriz en `main` cuando existe `GEMINI_API_KEY`.
+- **Archivos clave:**
+  - `api/internal/vault/fallback_extractor.go`
+  - `api/internal/vault/fallback_extractor_test.go`
+  - `api/internal/vault/error_classification.go`
+  - `api/cmd/server/main.go`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+- **Validacion:**
+  - Tests unitarios del fallback extractor (primario, secundario y manual review).
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Ajustar estrategia final con data real de precision/costos por proveedor en ambiente productivo.
+- **Siguiente paso recomendado:**
+  - Iniciar NXS-009 con metricas y alertas sobre errores y timeouts del pipeline.

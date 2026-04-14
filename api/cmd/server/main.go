@@ -36,9 +36,32 @@ func main() {
 		}
 	}
 
-	var extractor vault.Extractor = vault.NewSimulatedExtractor()
+	simulatedExtractor := vault.NewSimulatedExtractor()
+	var extractor vault.Extractor = simulatedExtractor
 	if cfg.GeminiAPIKey != "" {
-		extractor = vault.NewGeminiExtractor(cfg.GeminiAPIKey, cfg.GeminiModel)
+		geminiExtractor := vault.NewGeminiExtractor(cfg.GeminiAPIKey, cfg.GeminiModel)
+		extractor = vault.NewFallbackMatrixExtractor(
+			map[string]vault.FallbackStrategy{
+				"pdf": {
+					Primary:         vault.NamedExtractor{Name: "gemini", Extractor: geminiExtractor},
+					Secondary:       vault.NamedExtractor{Name: "simulated", Extractor: simulatedExtractor},
+					RequireManualOn: true,
+				},
+				"image": {
+					Primary:         vault.NamedExtractor{Name: "gemini", Extractor: geminiExtractor},
+					Secondary:       vault.NamedExtractor{Name: "simulated", Extractor: simulatedExtractor},
+					RequireManualOn: true,
+				},
+				"audio": {
+					Primary:         vault.NamedExtractor{Name: "gemini", Extractor: geminiExtractor},
+					Secondary:       vault.NamedExtractor{Name: "simulated", Extractor: simulatedExtractor},
+					RequireManualOn: true,
+				},
+			},
+			vault.FallbackStrategy{
+				Primary: vault.NamedExtractor{Name: "simulated", Extractor: simulatedExtractor},
+			},
+		)
 	}
 
 	store := vault.Store(vault.NewInMemoryStore())
