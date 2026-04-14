@@ -599,3 +599,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Token local es solo para entorno de desarrollo con `local-dev-secret`.
 - **Siguiente paso recomendado:**
   - Consumir helper en flujo frontend para autofill de token en modo local.
+
+## 2026-04-14 - Frontend refactor por capas + acciones Radar
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** continuar el bootstrap frontend para facilitar pruebas funcionales sin crecer un `main.dart` monolitico.
+- **Cambios principales:**
+  - Refactor de frontend en capas: `pages/home_page.dart`, `services/nexus_api_client.dart`, `widgets/response_card.dart`.
+  - La UI ahora cubre acciones `health`, `profile`, `sync`, `list`, `warmup` y `score` con `tender_id` editable.
+  - Se actualizo `frontend/README.md` con endpoints, uso y estructura de carpetas.
+- **Archivos clave:**
+  - `frontend/lib/main.dart`
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/lib/services/nexus_api_client.dart`
+  - `frontend/lib/widgets/response_card.dart`
+  - `frontend/README.md`
+- **Validacion:**
+  - `flutter analyze` (ok).
+- **Riesgos/pendientes:**
+  - Falta capa de estado mas robusta (provider/bloc) y navegacion multi-pantalla para escalar UI.
+- **Siguiente paso recomendado:**
+  - Separar secciones en pantallas dedicadas (`Radar`, `Company Profile`, `Ops`) y agregar manejo de errores por dominio.

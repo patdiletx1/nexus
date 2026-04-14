@@ -7,7 +7,11 @@ Frontend Flutter inicial para validar integracion local con backend Nexus.
 - Probar endpoints:
   - `GET /health/live`
   - `GET /v1/company/profile`
+  - `GET /v1/tenders/sync?limit=20`
   - `GET /v1/tenders?limit=20`
+  - `POST /v1/tenders/score/warmup`
+  - `GET /v1/tenders/{id}/score`
+- Ingresar `Tender ID` para score directo (por defecto `MOCK-003`).
 
 ## Ejecutar en local
 1. Resolver el bloqueo local de Flutter SDK (`dubious ownership` en `/opt/homebrew/share/flutter`).
@@ -26,3 +30,9 @@ Desde raiz del repo:
 
 Tambien puedes customizar claims:
 - `JWT_COMPANY_ID=company-local-99 JWT_SUB=user-x ./scripts/gen_local_jwt.sh`
+
+## Estructura actual
+- `lib/main.dart`: inicializacion de app y tema.
+- `lib/pages/home_page.dart`: pantalla principal y estado de UI.
+- `lib/services/nexus_api_client.dart`: llamadas HTTP al backend.
+- `lib/widgets/response_card.dart`: componente reusable para respuestas.
