@@ -14,8 +14,14 @@ func TestOpsAlerts(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		metrics.RecordHTTPRequest("GET", "/v1/test", 500, 10)
 	}
+	metrics.RecordTenderWarmup("profile", "targeted_ids", 10, 5, 5, 5)
 
-	handler := OpsHandler{Metrics: metrics}
+	handler := OpsHandler{
+		Metrics: metrics,
+		Thresholds: observability.AlertThresholds{
+			WarmupSkippedRatioPercent: 20,
+		},
+	}
 	req := httptest.NewRequest(http.MethodGet, "/v1/ops/alerts", nil)
 	rec := httptest.NewRecorder()
 	handler.Alerts(rec, req)

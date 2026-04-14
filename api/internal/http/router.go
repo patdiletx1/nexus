@@ -31,6 +31,7 @@ type RouterConfig struct {
 	TenderScoreCache    tenders.ScoreCache
 	TenderScoreCacheTTL time.Duration
 	Metrics             *observability.Metrics
+	AlertThresholds     observability.AlertThresholds
 }
 
 func NewRouter(cfg RouterConfig) http.Handler {
@@ -75,7 +76,8 @@ func NewRouter(cfg RouterConfig) http.Handler {
 		ScoreCache: cfg.TenderScoreCache,
 	}
 	opsHandler := handlers.OpsHandler{
-		Metrics: cfg.Metrics,
+		Metrics:    cfg.Metrics,
+		Thresholds: cfg.AlertThresholds,
 	}
 	mux.Handle("GET /v1/protected", authenticated(http.HandlerFunc(handlers.ProtectedExample)))
 	mux.Handle("POST /v1/vault/upload", authenticated(http.HandlerFunc(vaultHandler.Upload)))

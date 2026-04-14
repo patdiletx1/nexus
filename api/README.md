@@ -20,6 +20,10 @@ Copiar `.env.example` y ajustar valores:
 - `CHILECOMPRA_API_KEY` (opcional)
 - `CHILECOMPRA_TENDERS_PATH` (opcional)
 - `TENDER_SCORE_CACHE_TTL_SECONDS` (opcional; default 900)
+- `ALERT_HTTP_ERROR_RATE_PERCENT` (opcional; default 5)
+- `ALERT_VAULT_TIMEOUT_PERCENT` (opcional; default 20)
+- `ALERT_VAULT_INFLIGHT_MAX` (opcional; default 10)
+- `ALERT_WARMUP_SKIPPED_RATIO_PERCENT` (opcional; default 30)
 
 ## Ejecutar servidor
 ```bash

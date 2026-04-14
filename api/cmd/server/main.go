@@ -116,6 +116,12 @@ func main() {
 		TenderScoreCache:    tenderScoreCache,
 		TenderScoreCacheTTL: time.Duration(cfg.TenderScoreCacheTTLSeconds) * time.Second,
 		Metrics:             metricsCollector,
+		AlertThresholds: observability.AlertThresholds{
+			HTTPErrorRatePercent:      cfg.AlertHTTPErrorRatePercent,
+			VaultTimeoutPercent:       cfg.AlertVaultTimeoutPercent,
+			VaultInflightMax:          cfg.AlertVaultInflightMax,
+			WarmupSkippedRatioPercent: cfg.AlertWarmupSkippedRatioPercent,
+		},
 	})
 
 	if cfg.IdempotencyCleanupIntervalSeconds > 0 {

@@ -483,3 +483,24 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Ajustar umbral en base a comportamiento real de clientes.
 - **Siguiente paso recomendado:**
   - Exponer threshold via config para tunning por entorno.
+
+## 2026-04-14 - Alert thresholds configurable by environment
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** permitir tuning operativo por entorno sin cambios de codigo.
+- **Cambios principales:**
+  - Se agregaron variables de entorno para umbrales de alertas (`http`, `vault`, `warmup`).
+  - `OpsHandler` ahora evalua alertas usando thresholds inyectados desde config.
+  - Se actualizaron `README` y `.env.example` con defaults operativos.
+- **Archivos clave:**
+  - `api/internal/config/config.go`
+  - `api/cmd/server/main.go`
+  - `api/internal/http/router.go`
+  - `api/internal/http/handlers/ops.go`
+  - `api/.env.example`
+  - `api/README.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Definir valores objetivo por ambiente (`dev/staging/prod`) con datos reales.
+- **Siguiente paso recomendado:**
+  - Documentar baseline de thresholds por entorno en runbook SRE.
