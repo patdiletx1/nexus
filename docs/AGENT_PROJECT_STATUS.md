@@ -31,6 +31,7 @@
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
 - Frontend Flutter (aun no abordado en este repo).
+- Ejecutar smoke E2E real con `api/scripts/e2e_preprod_smoke.sh`.
 
 ## Endpoints relevantes ya disponibles
 - Boveda: `POST /v1/vault/upload`, `POST /v1/vault/process`, `POST /v1/vault/items/{id}/retry`
@@ -48,4 +49,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Iniciar bloque de validacion E2E con credenciales reales (Supabase/Gemini/ChileCompra) y criterios de salida de pre-produccion.
+Ejecutar `api/scripts/e2e_preprod_smoke.sh` en entorno con credenciales reales y registrar evidencia en `docs/E2E_PREPROD_VALIDATION.md`.
