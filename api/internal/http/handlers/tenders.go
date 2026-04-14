@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,6 +18,12 @@ type TendersHandler struct {
 	Profile       companyprofile.Store
 	ScoreCache    tenders.ScoreCache
 	ScoreCacheTTL time.Duration
+}
+
+type scoreWarmupRequest struct {
+	Limit           int      `json:"limit"`
+	CompanyRegion   string   `json:"company_region"`
+	CompanyKeywords []string `json:"company_keywords"`
 }
 
 func (h TendersHandler) Sync(w http.ResponseWriter, r *http.Request) {
@@ -105,26 +112,11 @@ func (h TendersHandler) Score(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	companyRegion := strings.TrimSpace(r.URL.Query().Get("company_region"))
-	keywords := parseKeywords(r.URL.Query().Get("company_keywords"))
-	profileSource := "query"
-	if companyRegion == "" || len(keywords) == 0 {
-		if h.Profile != nil {
-			if profile, ok := h.Profile.Get(companyID); ok {
-				if companyRegion == "" {
-					companyRegion = profile.PreferredRegion
-				}
-				if len(keywords) == 0 {
-					keywords = profile.Keywords
-				}
-				profileSource = "profile"
-			} else {
-				profileSource = "default"
-			}
-		} else {
-			profileSource = "default"
-		}
-	}
+	companyRegion, keywords, profileSource := h.resolveScoreInputs(
+		companyID,
+		strings.TrimSpace(r.URL.Query().Get("company_region")),
+		parseKeywords(r.URL.Query().Get("company_keywords")),
+	)
 	result := tenders.ScoreTender(item, tenders.ScoreInput{
 		CompanyRegion:   companyRegion,
 		CompanyKeywords: keywords,
@@ -155,6 +147,99 @@ func (h TendersHandler) Score(w http.ResponseWriter, r *http.Request) {
 			"profile_source":   profileSource,
 		},
 	})
+}
+
+func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request) {
+	if h.Store == nil {
+		http.Error(w, "tenders store unavailable", http.StatusInternalServerError)
+		return
+	}
+	companyID := CompanyIDFromContext(r.Context())
+	if companyID == "" {
+		http.Error(w, "missing auth context", http.StatusUnauthorized)
+		return
+	}
+
+	var req scoreWarmupRequest
+	if r.Body != nil {
+		_ = json.NewDecoder(r.Body).Decode(&req)
+	}
+	limit := req.Limit
+	if limit <= 0 {
+		limit = parseLimit(r.URL.Query().Get("limit"), 100, 500)
+	}
+	if limit <= 0 {
+		limit = 100
+	}
+
+	profileKeywords := req.CompanyKeywords
+	if len(profileKeywords) == 0 {
+		profileKeywords = parseKeywords(r.URL.Query().Get("company_keywords"))
+	}
+	companyRegion, keywords, profileSource := h.resolveScoreInputs(
+		companyID,
+		strings.TrimSpace(req.CompanyRegion),
+		profileKeywords,
+	)
+	fingerprint := tenders.BuildProfileFingerprint(companyRegion, keywords)
+	items := h.Store.ListByCompany(companyID, limit)
+	if h.ScoreCache == nil {
+		h.ScoreCache = tenders.NoopScoreCache{}
+	}
+
+	cacheHits := 0
+	cachedWrites := 0
+	processedCount := 0
+	for _, item := range items {
+		processedCount++
+		if _, ok := h.ScoreCache.Get(companyID, item.ExternalID, fingerprint); ok {
+			cacheHits++
+			continue
+		}
+		score := tenders.ScoreTender(item, tenders.ScoreInput{
+			CompanyRegion:   companyRegion,
+			CompanyKeywords: keywords,
+		})
+		h.ScoreCache.Put(companyID, item.ExternalID, fingerprint, tenders.CachedScore{
+			Score:   score.Score,
+			Reasons: score.Reasons,
+		}, h.ScoreCacheTTL)
+		cachedWrites++
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"processed_count": processedCount,
+		"cache_hits":      cacheHits,
+		"cache_writes":    cachedWrites,
+		"limit":           limit,
+		"inputs": map[string]any{
+			"company_region":   companyRegion,
+			"company_keywords": keywords,
+			"profile_source":   profileSource,
+		},
+	})
+}
+
+func (h TendersHandler) resolveScoreInputs(companyID, companyRegion string, keywords []string) (string, []string, string) {
+	profileSource := "query"
+	if companyRegion == "" || len(keywords) == 0 {
+		if h.Profile != nil {
+			if profile, ok := h.Profile.Get(companyID); ok {
+				if companyRegion == "" {
+					companyRegion = profile.PreferredRegion
+				}
+				if len(keywords) == 0 {
+					keywords = profile.Keywords
+				}
+				profileSource = "profile"
+			} else {
+				profileSource = "default"
+			}
+		} else {
+			profileSource = "default"
+		}
+	}
+	return companyRegion, keywords, profileSource
 }
 
 func parseLimit(raw string, fallback, max int) int {

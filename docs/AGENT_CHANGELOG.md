@@ -366,3 +366,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Pendiente principal desplazado a validacion E2E con credenciales reales de proveedores.
 - **Siguiente paso recomendado:**
   - Ejecutar plan E2E controlado y documentar resultados contra criterios de pre-produccion.
+
+## 2026-04-14 - Score cache warmup endpoint
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** acelerar UX de listados de licitaciones precalentando score cache por empresa.
+- **Cambios principales:**
+  - Se implemento `POST /v1/tenders/score/warmup`.
+  - Warmup usa inputs directos o fallback a `company/profile` para construir fingerprint.
+  - Se agregaron tests de cache writes/hits y fallback de perfil.
+- **Archivos clave:**
+  - `api/internal/http/handlers/tenders.go`
+  - `api/internal/http/handlers/tenders_test.go`
+  - `api/internal/http/router.go`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Pendiente medir impacto real de warmup en latencia de listados con trafico productivo.
+- **Siguiente paso recomendado:**
+  - Integrar llamada de warmup en flujo frontend al entrar al radar.

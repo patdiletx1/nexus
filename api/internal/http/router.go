@@ -86,6 +86,7 @@ func NewRouter(cfg RouterConfig) http.Handler {
 	mux.Handle("GET /v1/tenders/sync", authenticated(http.HandlerFunc(tendersHandler.Sync)))
 	mux.Handle("GET /v1/tenders", authenticated(http.HandlerFunc(tendersHandler.List)))
 	mux.Handle("GET /v1/tenders/{id}/score", authenticated(http.HandlerFunc(tendersHandler.Score)))
+	mux.Handle("POST /v1/tenders/score/warmup", authenticated(http.HandlerFunc(tendersHandler.WarmupScoreCache)))
 	mux.Handle("GET /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Get)))
 	mux.Handle("PUT /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Upsert)))
 	mux.Handle("GET /v1/ops/alerts", authenticated(http.HandlerFunc(opsHandler.Alerts)))

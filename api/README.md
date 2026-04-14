@@ -55,6 +55,7 @@ make docker-go-test
 - `GET /v1/tenders/sync` (requiere Bearer JWT)
 - `GET /v1/tenders` (requiere Bearer JWT)
 - `GET /v1/tenders/{id}/score` (requiere Bearer JWT)
+- `POST /v1/tenders/score/warmup` (requiere Bearer JWT)
 - `GET /v1/company/profile` (requiere Bearer JWT)
 - `PUT /v1/company/profile` (requiere Bearer JWT)
 - `GET /v1/ops/alerts` (requiere Bearer JWT)
@@ -82,6 +83,11 @@ Para `GET /v1/tenders/sync` puedes usar:
 Para `GET /v1/tenders/{id}/score` puedes usar:
 - `company_region`
 - `company_keywords` (separadas por coma)
+
+Para `POST /v1/tenders/score/warmup` puedes enviar:
+- body JSON opcional: `limit`, `company_region`, `company_keywords`
+- o query params equivalentes: `limit`, `company_region`, `company_keywords`
+- respuesta incluye `processed_count`, `cache_hits`, `cache_writes`
 
 Si no envias `company_region` o `company_keywords`, el score intenta usar el perfil guardado en `company/profile`.
 La respuesta de score incluye `cache_hit`.
