@@ -124,6 +124,11 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
   - `http_error_rate_high` (warning)
   - `vault_timeout_rate_high` (warning)
   - `vault_inflight_high` (critical)
+- Dashboard compartible:
+  - `docs/ops/NXS-009_DASHBOARD_MINIMO.md`
+  - `docs/ops/NXS-009_grafana_dashboard.json`
+- Playbook de respuesta:
+  - `docs/ops/NXS-009_ALERT_PLAYBOOK.md`
 
 ## Evaluacion base de calidad documental (NXS-008)
 - Dataset mini: `api/testdata/vault_extraction_dataset.json`

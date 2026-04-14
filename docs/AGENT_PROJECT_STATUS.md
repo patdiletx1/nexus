@@ -9,7 +9,7 @@
 - **NXS-006 (Radar ChileCompra):** `done` (pendiente validacion final con credenciales reales).
 - **NXS-007 (Score inicial):** `done`.
 - **NXS-008 (Hardening documental):** `done`.
-- **NXS-009 (Observabilidad SRE-lite):** `in_progress` (metricas + alertas base implementadas; falta dashboard compartible).
+- **NXS-009 (Observabilidad SRE-lite):** `done` (metricas + alertas + dashboard + playbook).
 - **NXS-010 (CI/CD y quality gate):** `next`.
 
 ## Hecho (resumen tecnico)
@@ -28,7 +28,6 @@
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
-- Observabilidad SRE-lite (metricas + alertas, no solo logs).
 - CI/CD con gates formales para merge/release.
 - Frontend Flutter (aun no abordado en este repo).
 
@@ -48,4 +47,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Completar NXS-009 con dashboard operativo compartible y playbook de respuesta; luego iniciar NXS-010.
+Iniciar NXS-010: pipeline CI obligatorio con test en Docker y plantilla de release/changelog tecnico por iteracion.

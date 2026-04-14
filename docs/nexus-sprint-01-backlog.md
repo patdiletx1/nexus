@@ -242,7 +242,7 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Errores clasificados por tipo y accion de fallback.
 
 #### NXS-009 - Observabilidad SRE-lite (metricas + alertas)
-**Estado:** `in_progress` (metricas + alertas base listas; falta dashboard operativo compartible)  
+**Estado:** `done` (metricas + alertas + dashboard compartible + playbook operativo)  
 **Prioridad:** Media-Alta  
 **Dependencias:** NXS-005
 
@@ -273,5 +273,4 @@ Cerrar brechas de produccion temprana: Radar ChileCompra, robustez de procesamie
 - Confirmacion de estrategia final de consumo ChileCompra (limites/cuotas/retries).
 
 ### Plan de ejecucion recomendado (proximo)
-1. NXS-009
-2. NXS-010
+1. NXS-010

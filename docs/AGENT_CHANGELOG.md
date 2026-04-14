@@ -261,3 +261,25 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta dashboard compartible para cierre completo de NXS-009.
 - **Siguiente paso recomendado:**
   - Definir template de dashboard y playbook de respuesta operativa.
+
+## 2026-04-14 - NXS-009 fase 3 (dashboard + runbook)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cerrar observabilidad SRE-lite con activos compartibles para operacion diaria.
+- **Cambios principales:**
+  - Se agrego guia de dashboard minimo con queries PromQL para seguimiento diario.
+  - Se agrego JSON importable de dashboard Grafana inicial.
+  - Se agrego playbook de respuesta para alertas `http_error_rate`, `vault_timeout_rate` y `vault_inflight`.
+- **Archivos clave:**
+  - `docs/ops/NXS-009_DASHBOARD_MINIMO.md`
+  - `docs/ops/NXS-009_grafana_dashboard.json`
+  - `docs/ops/NXS-009_ALERT_PLAYBOOK.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+  - `docs/AGENT_HANDOFF_INDEX.md`
+  - `api/README.md`
+- **Validacion:**
+  - Revision de consistencia entre metricas expuestas, alertas activas y formulas de dashboard.
+- **Riesgos/pendientes:**
+  - Ajustar umbrales con telemetria real una vez disponible trafico productivo.
+- **Siguiente paso recomendado:**
+  - Iniciar NXS-010 con CI obligatorio y convencion de release/changelog tecnico.
