@@ -68,6 +68,7 @@ func NewRouter(cfg RouterConfig) http.Handler {
 		Profile:       cfg.CompanyProfileStore,
 		ScoreCache:    cfg.TenderScoreCache,
 		ScoreCacheTTL: cfg.TenderScoreCacheTTL,
+		Metrics:       cfg.Metrics,
 	}
 	companyProfileHandler := handlers.CompanyProfileHandler{
 		Store:      cfg.CompanyProfileStore,

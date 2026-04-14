@@ -136,6 +136,12 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
 - Metricas pipeline boveda:
   - `nexus_vault_processing_total` (labels: `result`, `document_family`, `error_category`)
   - `nexus_vault_inflight`
+- Metricas warmup score:
+  - `nexus_tenders_warmup_runs_total`
+  - `nexus_tenders_warmup_processed_total`
+  - `nexus_tenders_warmup_cache_hits_total`
+  - `nexus_tenders_warmup_cache_writes_total`
+  - `nexus_tenders_warmup_skipped_total`
 - Alertas operativas base (`GET /v1/ops/alerts`):
   - `http_error_rate_high` (warning)
   - `vault_timeout_rate_high` (warning)

@@ -442,3 +442,24 @@ Registro operativo de sesiones para continuidad entre agentes.
   - La corrida depende de credenciales y datos reales del entorno.
 - **Siguiente paso recomendado:**
   - Ejecutar smoke en staging/preprod y adjuntar evidencia en changelog tecnico.
+
+## 2026-04-14 - Warmup observability metrics
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** medir efectividad de score warmup para ajuste de lotes y costo.
+- **Cambios principales:**
+  - Se agrego instrumentacion de warmup en `/metrics` (runs, processed, cache hits, writes, skipped).
+  - Warmup registra metrica por `profile_source` y `target_mode`.
+  - Se agregaron tests en `observability` y `tenders` para validar exposicion/registro.
+- **Archivos clave:**
+  - `api/internal/observability/metrics.go`
+  - `api/internal/observability/metrics_test.go`
+  - `api/internal/http/handlers/tenders.go`
+  - `api/internal/http/handlers/tenders_test.go`
+  - `api/internal/http/router.go`
+  - `api/README.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Definir umbrales de alerta sobre tasas de `skipped` en warmup.
+- **Siguiente paso recomendado:**
+  - Agregar alerta cuando skipped ratio de warmup supere umbral configurable.
