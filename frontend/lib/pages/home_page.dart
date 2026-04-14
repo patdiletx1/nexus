@@ -90,6 +90,37 @@ class _HomePageState extends State<HomePage> {
       _scoreResponse = "";
       _errorMessage = "";
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Sesion local limpiada")),
+    );
+  }
+
+  Future<void> _confirmAndClearLocalSession() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Limpiar sesion local"),
+          content: const Text(
+            "Se borraran API_BASE_URL, JWT_TOKEN y Tender ID guardados localmente.",
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text("Cancelar"),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text("Limpiar"),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true) {
+      return;
+    }
+    await _clearLocalSession();
   }
 
   @override
@@ -192,7 +223,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
-              onPressed: _loading ? null : _clearLocalSession,
+              onPressed: _loading ? null : _confirmAndClearLocalSession,
               icon: const Icon(Icons.delete_sweep_outlined),
               label: const Text("Limpiar sesion local"),
             ),
