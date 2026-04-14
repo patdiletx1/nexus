@@ -86,7 +86,9 @@ Para `GET /v1/tenders/{id}/score` puedes usar:
 
 Para `POST /v1/tenders/score/warmup` puedes enviar:
 - body JSON opcional: `limit`, `company_region`, `company_keywords`
+- body JSON opcional: `tender_ids` (lista de `external_id` para warmup selectivo)
 - o query params equivalentes: `limit`, `company_region`, `company_keywords`
+- query param opcional: `tender_ids` separado por coma
 - respuesta incluye `processed_count`, `cache_hits`, `cache_writes`
 
 Si no envias `company_region` o `company_keywords`, el score intenta usar el perfil guardado en `company/profile`.

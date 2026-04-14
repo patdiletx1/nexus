@@ -267,3 +267,49 @@ func TestTendersScoreWarmupUsesProfileFallback(t *testing.T) {
 		t.Fatalf("expected profile source profile, got %v", inputs["profile_source"])
 	}
 }
+
+func TestTendersScoreWarmupTargetsSpecificIDs(t *testing.T) {
+	tendersStore := tenders.NewInMemoryStore()
+	tendersStore.Upsert("company-1", tenders.Tender{
+		ExternalID:  "ext-warm-target-1",
+		Title:       "Mantencion A",
+		Description: "mantencion",
+		Region:      "Biobio",
+		Source:      "chilecompra",
+	})
+	tendersStore.Upsert("company-1", tenders.Tender{
+		ExternalID:  "ext-warm-target-2",
+		Title:       "Mantencion B",
+		Description: "mantencion",
+		Region:      "Biobio",
+		Source:      "chilecompra",
+	})
+
+	handler := TendersHandler{
+		Store:         tendersStore,
+		ScoreCache:    tenders.NewInMemoryScoreCache(),
+		ScoreCacheTTL: 15 * time.Minute,
+	}
+
+	body := []byte(`{"tender_ids":["ext-warm-target-1","ext-warm-target-1","missing-id"],"company_region":"Biobio","company_keywords":["mantencion"]}`)
+	req := httptest.NewRequest(http.MethodPost, "/v1/tenders/score/warmup", bytes.NewReader(body))
+	req = req.WithContext(WithAuthContext(context.Background(), "user-1", "company-1", "member"))
+	rec := httptest.NewRecorder()
+	handler.WarmupScoreCache(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+
+	var payload map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
+		t.Fatalf("failed decoding payload: %v", err)
+	}
+	processedCount := int(payload["processed_count"].(float64))
+	if processedCount != 1 {
+		t.Fatalf("expected processed_count=1, got %d", processedCount)
+	}
+	cacheWrites := int(payload["cache_writes"].(float64))
+	if cacheWrites != 1 {
+		t.Fatalf("expected cache_writes=1, got %d", cacheWrites)
+	}
+}

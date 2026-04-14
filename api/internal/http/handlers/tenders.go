@@ -24,6 +24,7 @@ type scoreWarmupRequest struct {
 	Limit           int      `json:"limit"`
 	CompanyRegion   string   `json:"company_region"`
 	CompanyKeywords []string `json:"company_keywords"`
+	TenderIDs       []string `json:"tender_ids"`
 }
 
 func (h TendersHandler) Sync(w http.ResponseWriter, r *http.Request) {
@@ -176,13 +177,17 @@ func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request)
 	if len(profileKeywords) == 0 {
 		profileKeywords = parseKeywords(r.URL.Query().Get("company_keywords"))
 	}
+	tenderIDs := req.TenderIDs
+	if len(tenderIDs) == 0 {
+		tenderIDs = parseKeywords(r.URL.Query().Get("tender_ids"))
+	}
 	companyRegion, keywords, profileSource := h.resolveScoreInputs(
 		companyID,
 		strings.TrimSpace(req.CompanyRegion),
 		profileKeywords,
 	)
 	fingerprint := tenders.BuildProfileFingerprint(companyRegion, keywords)
-	items := h.Store.ListByCompany(companyID, limit)
+	items := h.resolveWarmupTenders(companyID, limit, tenderIDs)
 	if h.ScoreCache == nil {
 		h.ScoreCache = tenders.NoopScoreCache{}
 	}
@@ -212,12 +217,35 @@ func (h TendersHandler) WarmupScoreCache(w http.ResponseWriter, r *http.Request)
 		"cache_hits":      cacheHits,
 		"cache_writes":    cachedWrites,
 		"limit":           limit,
+		"targeted_ids":    tenderIDs,
 		"inputs": map[string]any{
 			"company_region":   companyRegion,
 			"company_keywords": keywords,
 			"profile_source":   profileSource,
 		},
 	})
+}
+
+func (h TendersHandler) resolveWarmupTenders(companyID string, limit int, tenderIDs []string) []tenders.Tender {
+	if len(tenderIDs) == 0 {
+		return h.Store.ListByCompany(companyID, limit)
+	}
+	seen := map[string]struct{}{}
+	out := make([]tenders.Tender, 0, len(tenderIDs))
+	for _, rawID := range tenderIDs {
+		externalID := strings.TrimSpace(rawID)
+		if externalID == "" {
+			continue
+		}
+		if _, exists := seen[externalID]; exists {
+			continue
+		}
+		seen[externalID] = struct{}{}
+		if item, ok := h.Store.GetByExternalID(companyID, externalID); ok {
+			out = append(out, item)
+		}
+	}
+	return out
 }
 
 func (h TendersHandler) resolveScoreInputs(companyID, companyRegion string, keywords []string) (string, []string, string) {
