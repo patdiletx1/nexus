@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   String _errorMessage = "";
   bool _loading = false;
   bool _loadingSavedInputs = true;
+  bool _obscureToken = true;
 
   @override
   void initState() {
@@ -69,6 +70,26 @@ class _HomePageState extends State<HomePage> {
     await prefs.setString(_baseUrlKey, _baseUrlController.text.trim());
     await prefs.setString(_jwtTokenKey, _tokenController.text);
     await prefs.setString(_tenderIdKey, _tenderIdController.text.trim());
+  }
+
+  Future<void> _clearLocalSession() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_baseUrlKey);
+    await prefs.remove(_jwtTokenKey);
+    await prefs.remove(_tenderIdKey);
+    if (!mounted) return;
+    setState(() {
+      _baseUrlController.text = "http://localhost:8080";
+      _tokenController.clear();
+      _tenderIdController.text = "MOCK-003";
+      _healthResponse = "";
+      _profileResponse = "";
+      _syncResponse = "";
+      _tendersResponse = "";
+      _warmupResponse = "";
+      _scoreResponse = "";
+      _errorMessage = "";
+    });
   }
 
   @override
@@ -144,9 +165,21 @@ class _HomePageState extends State<HomePage> {
               controller: _tokenController,
               minLines: 2,
               maxLines: 3,
-              decoration: const InputDecoration(
+              obscureText: _obscureToken,
+              decoration: InputDecoration(
                 labelText: "JWT_TOKEN (Bearer)",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  tooltip: _obscureToken ? "Mostrar token" : "Ocultar token",
+                  onPressed: () {
+                    setState(() {
+                      _obscureToken = !_obscureToken;
+                    });
+                  },
+                  icon: Icon(
+                    _obscureToken ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -156,6 +189,12 @@ class _HomePageState extends State<HomePage> {
                 labelText: "Tender ID para score",
                 border: OutlineInputBorder(),
               ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: _loading ? null : _clearLocalSession,
+              icon: const Icon(Icons.delete_sweep_outlined),
+              label: const Text("Limpiar sesion local"),
             ),
             const SizedBox(height: 12),
             Wrap(

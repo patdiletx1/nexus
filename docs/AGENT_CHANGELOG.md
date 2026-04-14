@@ -638,3 +638,21 @@ Registro operativo de sesiones para continuidad entre agentes.
   - JWT local queda persistido en storage del navegador/dispositivo (aceptable solo para entorno dev).
 - **Siguiente paso recomendado:**
   - Agregar boton "limpiar sesion local" para reset de token/URL desde UI.
+
+## 2026-04-14 - Controles UX de sesion local frontend
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** completar ciclo de usabilidad local tras agregar persistencia de configuracion.
+- **Cambios principales:**
+  - Se agrego toggle de visibilidad para `JWT_TOKEN` en el input principal.
+  - Se agrego boton `Limpiar sesion local` para resetear storage local y respuestas en UI.
+  - Se actualizaron docs de frontend y estado de proyecto con estos controles.
+- **Archivos clave:**
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Falta confirmacion explicita antes de limpiar sesion para prevenir accion accidental.
+- **Siguiente paso recomendado:**
+  - Agregar dialogo de confirmacion y snackbar de resultado al limpiar sesion.

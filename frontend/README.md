@@ -5,6 +5,8 @@ Frontend Flutter inicial para validar integracion local con backend Nexus.
 ## Funcionalidad inicial
 - Configurar `API_BASE_URL` y `JWT_TOKEN` desde UI.
 - Persistencia local automatica de `API_BASE_URL`, `JWT_TOKEN` y `Tender ID`.
+- Toggle para mostrar/ocultar `JWT_TOKEN`.
+- Boton para limpiar sesion local (resetea storage + campos + respuestas).
 - Probar endpoints:
   - `GET /health/live`
   - `GET /v1/company/profile`
