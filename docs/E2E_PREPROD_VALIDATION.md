@@ -19,9 +19,13 @@ export JWT_TOKEN="<bearer-jwt>"
 export RUN_SYNC=1
 export SYNC_LIMIT=20
 export WARMUP_LIMIT=50
+export EVIDENCE_DIR="./artifacts/e2e"
+export EVIDENCE_BASENAME="preprod_smoke"
 
 ./api/scripts/e2e_preprod_smoke.sh
 ```
+
+El script guarda evidencia JSON automaticamente en `${EVIDENCE_DIR}/${EVIDENCE_BASENAME}_<timestamp>.json`.
 
 ## Que valida el smoke
 1. Health endpoints (`/health/live`, `/health/ready`)
@@ -38,6 +42,6 @@ export WARMUP_LIMIT=50
 - Alertas operativas (`/v1/ops/alerts`) sin `critical` persistente.
 
 ## Evidencia a guardar
-- Salida completa del script (timestamped).
+- Archivo JSON generado por el script en `./artifacts/e2e/` (configurable por `EVIDENCE_DIR`).
 - Captura de `/metrics` y `/v1/ops/alerts`.
 - Nota de riesgos residuales en `docs/AGENT_CHANGELOG.md`.

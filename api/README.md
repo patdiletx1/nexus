@@ -166,4 +166,5 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
 
 ## Validacion E2E preproduccion
 - Script smoke: `api/scripts/e2e_preprod_smoke.sh`
+- Evidencia JSON automatica: `EVIDENCE_DIR` (default `./artifacts/e2e`) + `EVIDENCE_BASENAME` (default `preprod_smoke`)
 - Checklist/criterios: `docs/E2E_PREPROD_VALIDATION.md`

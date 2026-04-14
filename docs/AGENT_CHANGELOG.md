@@ -504,3 +504,22 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Definir valores objetivo por ambiente (`dev/staging/prod`) con datos reales.
 - **Siguiente paso recomendado:**
   - Documentar baseline de thresholds por entorno en runbook SRE.
+
+## 2026-04-14 - E2E smoke evidence automation
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** facilitar validacion preprod con evidencia estructurada reutilizable en handoff.
+- **Cambios principales:**
+  - `api/scripts/e2e_preprod_smoke.sh` ahora genera evidencia JSON timestamped por corrida.
+  - Se agregan variables `EVIDENCE_DIR` y `EVIDENCE_BASENAME` para controlar destino/nombre de evidencia.
+  - Se actualizaron guias (`README` + checklist E2E + estado proyecto) para estandarizar el guardado de evidencia.
+- **Archivos clave:**
+  - `api/scripts/e2e_preprod_smoke.sh`
+  - `docs/E2E_PREPROD_VALIDATION.md`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - `bash -n api/scripts/e2e_preprod_smoke.sh`
+- **Riesgos/pendientes:**
+  - La corrida real sigue dependiendo de `JWT_TOKEN` y credenciales productivas de integraciones externas.
+- **Siguiente paso recomendado:**
+  - Ejecutar smoke real, versionar evidencia JSON y adjuntar snapshot de `/metrics` y `/v1/ops/alerts`.

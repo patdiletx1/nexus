@@ -9,6 +9,88 @@ SYNC_LIMIT="${SYNC_LIMIT:-20}"
 WARMUP_LIMIT="${WARMUP_LIMIT:-50}"
 SCORE_REGION="${SCORE_REGION:-}"
 SCORE_KEYWORDS="${SCORE_KEYWORDS:-}"
+EVIDENCE_DIR="${EVIDENCE_DIR:-./artifacts/e2e}"
+EVIDENCE_BASENAME="${EVIDENCE_BASENAME:-preprod_smoke}"
+
+mkdir -p "${EVIDENCE_DIR}"
+timestamp="$(date -u +"%Y%m%dT%H%M%SZ")"
+evidence_file="${EVIDENCE_DIR}/${EVIDENCE_BASENAME}_${timestamp}.json"
+
+live=""
+ready=""
+profile_payload=""
+sync_payload="{}"
+list_payload=""
+tender_id=""
+warmup_payload=""
+score_payload=""
+
+write_evidence() {
+  local status="$1"
+  python3 - \
+    "${evidence_file}" \
+    "${status}" \
+    "${timestamp}" \
+    "${API_BASE_URL}" \
+    "${RUN_SYNC}" \
+    "${SYNC_LIMIT}" \
+    "${WARMUP_LIMIT}" \
+    "${SCORE_REGION}" \
+    "${live}" \
+    "${ready}" \
+    "${profile_payload}" \
+    "${sync_payload}" \
+    "${list_payload}" \
+    "${warmup_payload}" \
+    "${score_payload}" \
+    "${tender_id}" <<'PY'
+import json
+import sys
+
+evidence_file = sys.argv[1]
+status = sys.argv[2]
+payload = {
+    "timestamp_utc": sys.argv[3],
+    "api_base_url": sys.argv[4],
+    "run_sync": sys.argv[5],
+    "sync_limit": sys.argv[6],
+    "warmup_limit": sys.argv[7],
+    "score_region": sys.argv[8],
+    "status": status,
+    "health": {
+        "live": sys.argv[9],
+        "ready": sys.argv[10],
+    },
+    "responses": {
+        "profile": sys.argv[11],
+        "sync": sys.argv[12],
+        "list": sys.argv[13],
+        "warmup": sys.argv[14],
+        "score": sys.argv[15],
+    },
+    "selected_tender_id": sys.argv[16],
+}
+
+def decode_maybe_json(raw):
+    try:
+        return json.loads(raw)
+    except Exception:
+        return raw
+
+for key in ["profile", "sync", "list", "warmup", "score"]:
+    payload["responses"][key] = decode_maybe_json(payload["responses"][key])
+
+with open(evidence_file, "w", encoding="utf-8") as fp:
+    json.dump(payload, fp, ensure_ascii=True, indent=2)
+PY
+}
+
+on_error() {
+  write_evidence "failed"
+  echo "Smoke E2E failed. Evidence saved at: ${evidence_file}"
+}
+
+trap on_error ERR
 
 if [[ -z "${JWT_TOKEN}" ]]; then
   echo "Missing JWT_TOKEN. Export JWT_TOKEN with a valid Bearer token."
@@ -114,4 +196,6 @@ score_payload="$(request_json "GET" "/v1/tenders/${tender_id}/score${score_query
 echo "${score_payload}" | python3 -m json.tool >/dev/null
 echo "score: ${score_payload}"
 
+write_evidence "success"
+echo "Evidence saved at: ${evidence_file}"
 echo "==> Smoke E2E completed successfully"
