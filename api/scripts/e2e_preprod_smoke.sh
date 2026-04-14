@@ -145,9 +145,11 @@ echo "==> List tenders"
 list_payload="$(request_json "GET" "/v1/tenders?limit=${SYNC_LIMIT}")"
 echo "${list_payload}" | python3 -m json.tool >/dev/null
 tender_id="$(
-  printf "%s" "${list_payload}" | python3 - <<'PY'
-import json, sys
-payload = json.load(sys.stdin)
+  LIST_PAYLOAD="${list_payload}" python3 - <<'PY'
+import json
+import os
+
+payload = json.loads(os.environ.get("LIST_PAYLOAD", "{}"))
 items = payload.get("tenders", [])
 if not items:
     print("")

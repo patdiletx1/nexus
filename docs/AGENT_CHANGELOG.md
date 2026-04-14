@@ -542,3 +542,25 @@ Registro operativo de sesiones para continuidad entre agentes.
   - La corrida depende de endpoints operativos y token con permisos sobre `company_id` real.
 - **Siguiente paso recomendado:**
   - Ejecutar smoke real y validar que `responses.ops_alerts.alerts` no presente `critical` persistente.
+
+## 2026-04-14 - Local full smoke con Radar mock + fix parser
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** habilitar validacion E2E completa en local sin bloqueo por credenciales ChileCompra.
+- **Cambios principales:**
+  - Se agrego `CHILECOMPRA_MOCK_ENABLED` para usar licitaciones mock en `sync` cuando no hay cliente real configurado.
+  - Se corrigio bug en `api/scripts/e2e_preprod_smoke.sh` al parsear `list_payload` (fallaba por lectura de stdin en Python).
+  - Se documento modo local en README/checklist y se valido smoke completo con evidencia generada.
+- **Archivos clave:**
+  - `api/internal/chilecompra/client.go`
+  - `api/internal/config/config.go`
+  - `api/cmd/server/main.go`
+  - `api/scripts/e2e_preprod_smoke.sh`
+  - `api/.env.example`
+  - `docs/E2E_PREPROD_VALIDATION.md`
+- **Validacion:**
+  - `dockerized go test ./...` (ok)
+  - `./api/scripts/e2e_preprod_smoke.sh` contra backend local con `CHILECOMPRA_MOCK_ENABLED=true` (ok)
+- **Riesgos/pendientes:**
+  - El smoke real con integracion ChileCompra aun depende de credenciales y comportamiento externo.
+- **Siguiente paso recomendado:**
+  - Repetir smoke en preprod real y comparar diferencias de score/warmup frente al modo mock local.
