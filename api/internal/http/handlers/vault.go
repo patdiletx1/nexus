@@ -503,7 +503,9 @@ func (h VaultHandler) startProcessing(itemID, companyID, userID, startedEventTyp
 	})
 
 	startedAt := time.Now().UTC()
+	h.Metrics.IncVaultInflight()
 	go func(currentItem vault.Item) {
+		defer h.Metrics.DecVaultInflight()
 		var content []byte
 		if h.Reader != nil {
 			readContent, readErr := h.Reader.ReadObject(currentItem.StoragePath)

@@ -15,6 +15,7 @@ type Metrics struct {
 	httpLatencyMsTotal map[string]int64
 
 	vaultProcessing map[string]int64
+	vaultInflight   int64
 }
 
 func NewMetrics() *Metrics {
@@ -23,6 +24,7 @@ func NewMetrics() *Metrics {
 		httpLatencyCount:   map[string]int64{},
 		httpLatencyMsTotal: map[string]int64{},
 		vaultProcessing:    map[string]int64{},
+		vaultInflight:      0,
 	}
 }
 
@@ -55,6 +57,26 @@ func (m *Metrics) RecordVaultProcessing(result, documentFamily, errorCategory st
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.vaultProcessing[key]++
+}
+
+func (m *Metrics) IncVaultInflight() {
+	if m == nil {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.vaultInflight++
+}
+
+func (m *Metrics) DecVaultInflight() {
+	if m == nil {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.vaultInflight > 0 {
+		m.vaultInflight--
+	}
 }
 
 func (m *Metrics) RenderPrometheus() string {
@@ -116,7 +138,102 @@ func (m *Metrics) RenderPrometheus() string {
 		))
 	}
 
+	b.WriteString("# HELP nexus_vault_inflight Current in-flight vault processing jobs.\n")
+	b.WriteString("# TYPE nexus_vault_inflight gauge\n")
+	b.WriteString(fmt.Sprintf("nexus_vault_inflight %d\n", m.vaultInflight))
+
 	return b.String()
+}
+
+type AlertThresholds struct {
+	HTTPErrorRatePercent float64
+	VaultTimeoutPercent  float64
+	VaultInflightMax     int64
+}
+
+type Alert struct {
+	Name        string  `json:"name"`
+	Severity    string  `json:"severity"`
+	Description string  `json:"description"`
+	Triggered   bool    `json:"triggered"`
+	Value       float64 `json:"value"`
+	Threshold   float64 `json:"threshold"`
+}
+
+func (m *Metrics) EvaluateAlerts(thresholds AlertThresholds) []Alert {
+	if m == nil {
+		return []Alert{}
+	}
+
+	if thresholds.HTTPErrorRatePercent <= 0 {
+		thresholds.HTTPErrorRatePercent = 5
+	}
+	if thresholds.VaultTimeoutPercent <= 0 {
+		thresholds.VaultTimeoutPercent = 20
+	}
+	if thresholds.VaultInflightMax <= 0 {
+		thresholds.VaultInflightMax = 10
+	}
+
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	totalRequests := int64(0)
+	errorRequests := int64(0)
+	for key, count := range m.httpRequests {
+		labels := parseLabels(key)
+		totalRequests += count
+		if strings.HasPrefix(labels["status"], "5") {
+			errorRequests += count
+		}
+	}
+	httpErrorRate := 0.0
+	if totalRequests > 0 {
+		httpErrorRate = float64(errorRequests) * 100 / float64(totalRequests)
+	}
+
+	totalVault := int64(0)
+	timeoutVault := int64(0)
+	for key, count := range m.vaultProcessing {
+		labels := parseLabels(key)
+		totalVault += count
+		if labels["error_category"] == "timeout" {
+			timeoutVault += count
+		}
+	}
+	timeoutRate := 0.0
+	if totalVault > 0 {
+		timeoutRate = float64(timeoutVault) * 100 / float64(totalVault)
+	}
+
+	inflight := float64(m.vaultInflight)
+	alerts := []Alert{
+		{
+			Name:        "http_error_rate_high",
+			Severity:    "warning",
+			Description: "HTTP 5xx rate is above threshold",
+			Triggered:   httpErrorRate >= thresholds.HTTPErrorRatePercent,
+			Value:       httpErrorRate,
+			Threshold:   thresholds.HTTPErrorRatePercent,
+		},
+		{
+			Name:        "vault_timeout_rate_high",
+			Severity:    "warning",
+			Description: "Vault processing timeout rate is above threshold",
+			Triggered:   timeoutRate >= thresholds.VaultTimeoutPercent,
+			Value:       timeoutRate,
+			Threshold:   thresholds.VaultTimeoutPercent,
+		},
+		{
+			Name:        "vault_inflight_high",
+			Severity:    "critical",
+			Description: "Vault in-flight processing jobs exceed safe threshold",
+			Triggered:   inflight >= float64(thresholds.VaultInflightMax),
+			Value:       inflight,
+			Threshold:   float64(thresholds.VaultInflightMax),
+		},
+	}
+	return alerts
 }
 
 func sortedKeys(values map[string]int64) []string {

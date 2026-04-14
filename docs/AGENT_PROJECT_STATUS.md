@@ -9,7 +9,7 @@
 - **NXS-006 (Radar ChileCompra):** `done` (pendiente validacion final con credenciales reales).
 - **NXS-007 (Score inicial):** `done`.
 - **NXS-008 (Hardening documental):** `done`.
-- **NXS-009 (Observabilidad SRE-lite):** `in_progress` (metricas base HTTP y pipeline boveda implementadas).
+- **NXS-009 (Observabilidad SRE-lite):** `in_progress` (metricas + alertas base implementadas; falta dashboard compartible).
 - **NXS-010 (CI/CD y quality gate):** `next`.
 
 ## Hecho (resumen tecnico)
@@ -48,4 +48,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Completar NXS-009 con alertas operativas (error_rate, timeout procesamiento, backlog worker) y playbook de respuesta.
+Completar NXS-009 con dashboard operativo compartible y playbook de respuesta; luego iniciar NXS-010.

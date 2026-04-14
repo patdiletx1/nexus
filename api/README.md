@@ -50,6 +50,7 @@ make docker-go-test
 - `GET /v1/tenders/{id}/score` (requiere Bearer JWT)
 - `GET /v1/company/profile` (requiere Bearer JWT)
 - `PUT /v1/company/profile` (requiere Bearer JWT)
+- `GET /v1/ops/alerts` (requiere Bearer JWT)
 
 `GET /v1/vault/items/{id}/events` soporta filtros opcionales:
 - `limit` (default 50, max 200)
@@ -118,6 +119,11 @@ Con credenciales Supabase (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), `POST /
   - `nexus_http_request_duration_ms_count`
 - Metricas pipeline boveda:
   - `nexus_vault_processing_total` (labels: `result`, `document_family`, `error_category`)
+  - `nexus_vault_inflight`
+- Alertas operativas base (`GET /v1/ops/alerts`):
+  - `http_error_rate_high` (warning)
+  - `vault_timeout_rate_high` (warning)
+  - `vault_inflight_high` (critical)
 
 ## Evaluacion base de calidad documental (NXS-008)
 - Dataset mini: `api/testdata/vault_extraction_dataset.json`

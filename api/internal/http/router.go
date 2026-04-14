@@ -73,6 +73,9 @@ func NewRouter(cfg RouterConfig) http.Handler {
 		Store:      cfg.CompanyProfileStore,
 		ScoreCache: cfg.TenderScoreCache,
 	}
+	opsHandler := handlers.OpsHandler{
+		Metrics: cfg.Metrics,
+	}
 	mux.Handle("GET /v1/protected", authenticated(http.HandlerFunc(handlers.ProtectedExample)))
 	mux.Handle("POST /v1/vault/upload", authenticated(http.HandlerFunc(vaultHandler.Upload)))
 	mux.Handle("POST /v1/vault/process", authenticated(http.HandlerFunc(vaultHandler.Process)))
@@ -85,6 +88,7 @@ func NewRouter(cfg RouterConfig) http.Handler {
 	mux.Handle("GET /v1/tenders/{id}/score", authenticated(http.HandlerFunc(tendersHandler.Score)))
 	mux.Handle("GET /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Get)))
 	mux.Handle("PUT /v1/company/profile", authenticated(http.HandlerFunc(companyProfileHandler.Upsert)))
+	mux.Handle("GET /v1/ops/alerts", authenticated(http.HandlerFunc(opsHandler.Alerts)))
 
 	return middleware.WithRequestID(withRequestLogging(mux, cfg.Metrics))
 }

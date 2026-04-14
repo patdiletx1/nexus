@@ -238,3 +238,26 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Faltan alertas automáticas y dashboard para cierre completo de NXS-009.
 - **Siguiente paso recomendado:**
   - Definir umbrales de alerta (error_rate/timeout/backlog) y playbook de respuesta.
+
+## 2026-04-14 - NXS-009 fase 2 (alertas operativas)
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** complementar observabilidad con alertas runtime consumibles por API.
+- **Cambios principales:**
+  - Se agrego evaluacion de alertas sobre error rate HTTP, timeout de pipeline y backlog inflight.
+  - Se incorporo gauge `nexus_vault_inflight` y tracking de jobs en procesamiento.
+  - Se habilito endpoint autenticado `GET /v1/ops/alerts`.
+- **Archivos clave:**
+  - `api/internal/observability/metrics.go`
+  - `api/internal/http/handlers/ops.go`
+  - `api/internal/http/handlers/ops_test.go`
+  - `api/internal/http/router.go`
+  - `api/internal/http/handlers/vault.go`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+  - `docs/nexus-sprint-01-backlog.md`
+- **Validacion:**
+  - Tests de alertas y render de metricas + suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Falta dashboard compartible para cierre completo de NXS-009.
+- **Siguiente paso recomendado:**
+  - Definir template de dashboard y playbook de respuesta operativa.
