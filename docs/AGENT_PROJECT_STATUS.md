@@ -34,7 +34,7 @@
 ## Pendiente principal
 - Integracion real validada contra API ChileCompra en entorno con credenciales reales.
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
-- Frontend Flutter: bootstrap local activo en `frontend/` con estructura por capas (`pages/services/widgets`), flujo `health/profile/sync/list/warmup/score`, persistencia local y controles de sesion (`mostrar/ocultar token`, `limpiar sesion local`).
+- Frontend Flutter: bootstrap local activo en `frontend/` con estructura por capas (`pages/services/widgets`), flujo `health/profile/sync/list/warmup/score`, persistencia local y controles de sesion (`mostrar/ocultar token`, `limpiar sesion local` con confirmacion y feedback).
 - Ejecutar smoke E2E real con `api/scripts/e2e_preprod_smoke.sh`.
 - Smoke E2E local full validado con cliente mock (pendiente equivalente con ChileCompra real).
 - Guardar evidencia de corrida en JSON (default `./artifacts/e2e/*.json`) y verificar `responses.metrics` + `responses.ops_alerts`.

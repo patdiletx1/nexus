@@ -656,3 +656,21 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta confirmacion explicita antes de limpiar sesion para prevenir accion accidental.
 - **Siguiente paso recomendado:**
   - Agregar dialogo de confirmacion y snackbar de resultado al limpiar sesion.
+
+## 2026-04-14 - Confirmacion y feedback en limpieza de sesion
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** reducir riesgo de borrado accidental al limpiar configuracion persistida en frontend.
+- **Cambios principales:**
+  - Se agrego dialogo de confirmacion antes de ejecutar `Limpiar sesion local`.
+  - Se agrego `SnackBar` de exito tras limpiar storage y resetear estado de pantalla.
+  - Se actualizaron README frontend y estado global con esta mejora UX.
+- **Archivos clave:**
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Pendiente internacionalizacion si la app migra a UI bilingue.
+- **Siguiente paso recomendado:**
+  - Agregar seccion `Ops` en frontend para visualizar `/v1/ops/alerts` y `/metrics` resumido.
