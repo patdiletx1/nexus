@@ -523,3 +523,22 @@ Registro operativo de sesiones para continuidad entre agentes.
   - La corrida real sigue dependiendo de `JWT_TOKEN` y credenciales productivas de integraciones externas.
 - **Siguiente paso recomendado:**
   - Ejecutar smoke real, versionar evidencia JSON y adjuntar snapshot de `/metrics` y `/v1/ops/alerts`.
+
+## 2026-04-14 - E2E observability snapshots in artifact
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cerrar evidencia preprod en un solo archivo para reducir pasos manuales y errores operativos.
+- **Cambios principales:**
+  - El smoke E2E ahora captura automaticamente `GET /metrics` y `GET /v1/ops/alerts`.
+  - Ambos snapshots quedan embebidos en el JSON de evidencia (`responses.metrics` y `responses.ops_alerts`).
+  - Se ajustaron guias de validacion/estado para usar evidencia unificada.
+- **Archivos clave:**
+  - `api/scripts/e2e_preprod_smoke.sh`
+  - `docs/E2E_PREPROD_VALIDATION.md`
+  - `api/README.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - `bash -n api/scripts/e2e_preprod_smoke.sh`
+- **Riesgos/pendientes:**
+  - La corrida depende de endpoints operativos y token con permisos sobre `company_id` real.
+- **Siguiente paso recomendado:**
+  - Ejecutar smoke real y validar que `responses.ops_alerts.alerts` no presente `critical` persistente.

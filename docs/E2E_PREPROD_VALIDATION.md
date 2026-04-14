@@ -25,7 +25,7 @@ export EVIDENCE_BASENAME="preprod_smoke"
 ./api/scripts/e2e_preprod_smoke.sh
 ```
 
-El script guarda evidencia JSON automaticamente en `${EVIDENCE_DIR}/${EVIDENCE_BASENAME}_<timestamp>.json`.
+El script guarda evidencia JSON automaticamente en `${EVIDENCE_DIR}/${EVIDENCE_BASENAME}_<timestamp>.json`, incluyendo snapshot de `GET /metrics` y `GET /v1/ops/alerts`.
 
 ## Que valida el smoke
 1. Health endpoints (`/health/live`, `/health/ready`)
@@ -43,5 +43,5 @@ El script guarda evidencia JSON automaticamente en `${EVIDENCE_DIR}/${EVIDENCE_B
 
 ## Evidencia a guardar
 - Archivo JSON generado por el script en `./artifacts/e2e/` (configurable por `EVIDENCE_DIR`).
-- Captura de `/metrics` y `/v1/ops/alerts`.
+- Revisar en el JSON los campos `responses.metrics` y `responses.ops_alerts`.
 - Nota de riesgos residuales en `docs/AGENT_CHANGELOG.md`.
