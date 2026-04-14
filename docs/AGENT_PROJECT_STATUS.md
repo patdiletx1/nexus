@@ -35,7 +35,7 @@
 - Hardening OCR productivo con medicion de precision por campos clave (no solo doc_type) y fallback por proveedor.
 - Frontend Flutter (aun no abordado en este repo).
 - Ejecutar smoke E2E real con `api/scripts/e2e_preprod_smoke.sh`.
-- Guardar evidencia de corrida en JSON (default `./artifacts/e2e/*.json`) y anexar `/metrics` + `/v1/ops/alerts`.
+- Guardar evidencia de corrida en JSON (default `./artifacts/e2e/*.json`) y verificar `responses.metrics` + `responses.ops_alerts`.
 
 ## Endpoints relevantes ya disponibles
 - Boveda: `POST /v1/vault/upload`, `POST /v1/vault/process`, `POST /v1/vault/items/{id}/retry`
@@ -53,4 +53,4 @@
 - `0007_tender_score_cache.sql`
 
 ## Siguiente tarea recomendada
-Ejecutar `api/scripts/e2e_preprod_smoke.sh` en entorno con credenciales reales y registrar evidencia JSON + capturas operativas en `docs/E2E_PREPROD_VALIDATION.md`.
+Ejecutar `api/scripts/e2e_preprod_smoke.sh` en entorno con credenciales reales y registrar evidencia JSON operativa en `docs/E2E_PREPROD_VALIDATION.md`.

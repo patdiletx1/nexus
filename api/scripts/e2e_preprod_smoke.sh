@@ -24,6 +24,8 @@ list_payload=""
 tender_id=""
 warmup_payload=""
 score_payload=""
+metrics_payload=""
+ops_alerts_payload=""
 
 write_evidence() {
   local status="$1"
@@ -43,6 +45,8 @@ write_evidence() {
     "${list_payload}" \
     "${warmup_payload}" \
     "${score_payload}" \
+    "${metrics_payload}" \
+    "${ops_alerts_payload}" \
     "${tender_id}" <<'PY'
 import json
 import sys
@@ -67,8 +71,10 @@ payload = {
         "list": sys.argv[13],
         "warmup": sys.argv[14],
         "score": sys.argv[15],
+        "metrics": sys.argv[16],
+        "ops_alerts": sys.argv[17],
     },
-    "selected_tender_id": sys.argv[16],
+    "selected_tender_id": sys.argv[18],
 }
 
 def decode_maybe_json(raw):
@@ -77,7 +83,7 @@ def decode_maybe_json(raw):
     except Exception:
         return raw
 
-for key in ["profile", "sync", "list", "warmup", "score"]:
+for key in ["profile", "sync", "list", "warmup", "score", "ops_alerts"]:
     payload["responses"][key] = decode_maybe_json(payload["responses"][key])
 
 with open(evidence_file, "w", encoding="utf-8") as fp:
@@ -115,29 +121,6 @@ request_json() {
 request_public() {
   local path="$1"
   curl -sS "${API_BASE_URL}${path}"
-}
-
-extract_json_field() {
-  local field="$1"
-  python3 - "$field" <<'PY'
-import json
-import sys
-field = sys.argv[1]
-payload = json.load(sys.stdin)
-value = payload
-for part in field.split("."):
-    if isinstance(value, dict):
-        value = value.get(part)
-    else:
-        value = None
-        break
-if value is None:
-    print("")
-elif isinstance(value, (dict, list)):
-    print(json.dumps(value))
-else:
-    print(value)
-PY
 }
 
 echo "==> Health checks"
@@ -195,6 +178,12 @@ fi
 score_payload="$(request_json "GET" "/v1/tenders/${tender_id}/score${score_query}")"
 echo "${score_payload}" | python3 -m json.tool >/dev/null
 echo "score: ${score_payload}"
+
+echo "==> Collect observability snapshots"
+metrics_payload="$(request_public "/metrics")"
+ops_alerts_payload="$(request_json "GET" "/v1/ops/alerts")"
+echo "${ops_alerts_payload}" | python3 -m json.tool >/dev/null
+echo "ops_alerts: ${ops_alerts_payload}"
 
 write_evidence "success"
 echo "Evidence saved at: ${evidence_file}"
