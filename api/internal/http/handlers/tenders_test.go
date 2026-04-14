@@ -312,4 +312,27 @@ func TestTendersScoreWarmupTargetsSpecificIDs(t *testing.T) {
 	if cacheWrites != 1 {
 		t.Fatalf("expected cache_writes=1, got %d", cacheWrites)
 	}
+	skippedIDs, ok := payload["skipped_ids"].([]any)
+	if !ok {
+		t.Fatalf("expected skipped_ids array, got %T", payload["skipped_ids"])
+	}
+	if len(skippedIDs) != 2 {
+		t.Fatalf("expected 2 skipped ids (duplicate + missing), got %d", len(skippedIDs))
+	}
+}
+
+func TestNormalizeWarmupTargetIDsRespectsMax(t *testing.T) {
+	normalized, skipped := normalizeWarmupTargetIDs([]string{
+		"a", "b", "c", "d",
+	}, 2)
+
+	if len(normalized) != 2 {
+		t.Fatalf("expected 2 normalized IDs, got %d", len(normalized))
+	}
+	if normalized[0] != "a" || normalized[1] != "b" {
+		t.Fatalf("unexpected normalized IDs: %v", normalized)
+	}
+	if len(skipped) != 2 {
+		t.Fatalf("expected 2 skipped IDs due to max limit, got %d", len(skipped))
+	}
 }

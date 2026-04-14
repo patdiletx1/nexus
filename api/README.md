@@ -89,7 +89,8 @@ Para `POST /v1/tenders/score/warmup` puedes enviar:
 - body JSON opcional: `tender_ids` (lista de `external_id` para warmup selectivo)
 - o query params equivalentes: `limit`, `company_region`, `company_keywords`
 - query param opcional: `tender_ids` separado por coma
-- respuesta incluye `processed_count`, `cache_hits`, `cache_writes`
+- maximo `200` `tender_ids` por request (exceso se reporta como omitido)
+- respuesta incluye `processed_count`, `cache_hits`, `cache_writes`, `targeted_ids`, `skipped_ids`
 
 Si no envias `company_region` o `company_keywords`, el score intenta usar el perfil guardado en `company/profile`.
 La respuesta de score incluye `cache_hit`.
