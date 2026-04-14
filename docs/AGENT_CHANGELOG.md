@@ -619,3 +619,22 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta capa de estado mas robusta (provider/bloc) y navegacion multi-pantalla para escalar UI.
 - **Siguiente paso recomendado:**
   - Separar secciones en pantallas dedicadas (`Radar`, `Company Profile`, `Ops`) y agregar manejo de errores por dominio.
+
+## 2026-04-14 - Persistencia local de configuracion frontend
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** evitar repetir pegado manual de URL/token en cada reinicio de app durante pruebas locales.
+- **Cambios principales:**
+  - Se agrego `shared_preferences` al frontend.
+  - `HomePage` ahora carga/guarda automaticamente `API_BASE_URL`, `JWT_TOKEN` y `Tender ID`.
+  - Se muestra indicador visual corto mientras se restauran valores al iniciar.
+- **Archivos clave:**
+  - `frontend/pubspec.yaml`
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/README.md`
+- **Validacion:**
+  - `flutter pub get`
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - JWT local queda persistido en storage del navegador/dispositivo (aceptable solo para entorno dev).
+- **Siguiente paso recomendado:**
+  - Agregar boton "limpiar sesion local" para reset de token/URL desde UI.
