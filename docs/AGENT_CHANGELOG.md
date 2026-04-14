@@ -463,3 +463,23 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Definir umbrales de alerta sobre tasas de `skipped` en warmup.
 - **Siguiente paso recomendado:**
   - Agregar alerta cuando skipped ratio de warmup supere umbral configurable.
+
+## 2026-04-14 - Warmup skipped-ratio alert
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** cerrar loop operativo entre metricas warmup y alertas accionables.
+- **Cambios principales:**
+  - Se agrego alerta `tenders_warmup_skipped_ratio_high` en evaluacion de `/v1/ops/alerts`.
+  - Se incluyo umbral configurable `WarmupSkippedRatioPercent` (default 30%).
+  - Se actualizaron playbook/dashboard con checks y formula de ratio.
+- **Archivos clave:**
+  - `api/internal/observability/metrics.go`
+  - `api/internal/observability/metrics_test.go`
+  - `docs/ops/NXS-009_ALERT_PLAYBOOK.md`
+  - `docs/ops/NXS-009_DASHBOARD_MINIMO.md`
+  - `docs/AGENT_PROJECT_STATUS.md`
+- **Validacion:**
+  - Suite `go test ./...` en Docker.
+- **Riesgos/pendientes:**
+  - Ajustar umbral en base a comportamiento real de clientes.
+- **Siguiente paso recomendado:**
+  - Exponer threshold via config para tunning por entorno.

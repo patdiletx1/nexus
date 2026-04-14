@@ -50,10 +50,19 @@ sum by (result, document_family) (rate(nexus_vault_processing_total[5m]))
 nexus_vault_inflight
 ```
 
+### 6) Warmup Skipped Ratio (%)
+**Objetivo:** detectar degradacion del warmup selectivo de score.
+
+**Formula sugerida**
+```promql
+100 * sum(rate(nexus_tenders_warmup_skipped_total[5m])) / sum(rate(nexus_tenders_warmup_processed_total[5m]))
+```
+
 ## Umbrales sugeridos (alineados a alertas)
 - HTTP error rate: warning >= 5%
 - Vault timeout rate: warning >= 20%
 - Vault inflight: critical >= 10
+- Warmup skipped ratio: warning >= 30%
 
 ## Operacion diaria
 - Revisión al inicio del día: 5 minutos.

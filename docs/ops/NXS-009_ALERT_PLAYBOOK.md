@@ -9,6 +9,7 @@ Runbook operativo para responder alertas base del backend Nexus.
   - `http_error_rate_high`
   - `vault_timeout_rate_high`
   - `vault_inflight_high`
+  - `tenders_warmup_skipped_ratio_high`
 
 ## Procedimiento general (5 minutos)
 1. Confirmar si la alerta sigue activa en 2 lecturas consecutivas (30s de diferencia).
@@ -62,6 +63,20 @@ Runbook operativo para responder alertas base del backend Nexus.
 - Limitar disparo de nuevos process requests temporalmente.
 - Priorizar reintentos solo para items de alto valor.
 - Si persiste > 10 min, tratar como incidente operativo.
+
+### 4) `tenders_warmup_skipped_ratio_high` (warning)
+**Significado**
+- El warmup de score esta omitiendo demasiados IDs respecto al volumen procesado.
+
+**Checks**
+- `nexus_tenders_warmup_skipped_total`
+- `nexus_tenders_warmup_processed_total`
+- Inputs del cliente (`targeted_ids`, `skipped_ids`) en respuestas recientes.
+
+**Acciones**
+- Revisar calidad de `tender_ids` enviados por frontend (duplicados/no existentes).
+- Reducir tamano de lote por request si hay overflow de IDs.
+- Ajustar fallback a `limit` cuando el modo selectivo venga degradado.
 
 ## Cierre de incidente
 - Confirmar retorno de alertas a estado no trigger.

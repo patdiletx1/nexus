@@ -23,6 +23,7 @@
 - Scoring inicial: endpoint de score explicable + perfil persistente por empresa + cache de score.
 - Warmup de score cache: `POST /v1/tenders/score/warmup` para precalentar cache por empresa.
 - Observabilidad de warmup: metricas de `runs/processed/hits/writes/skipped` en `/metrics`.
+- Alertas de warmup: `tenders_warmup_skipped_ratio_high` via `GET /v1/ops/alerts`.
 - Invalidacion de cache: al actualizar `company/profile`.
 - Hardening documental (parcial): clasificacion de errores (`error_stage`, `error_category`, `retryable`) y dataset mini con umbral inicial para `doc_type`.
 - Quality signals en procesamiento: extraccion de campos clave (`amount`, `date`, `company_name`) con cobertura base por dataset.

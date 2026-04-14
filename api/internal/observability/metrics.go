@@ -242,9 +242,10 @@ func (m *Metrics) RenderPrometheus() string {
 }
 
 type AlertThresholds struct {
-	HTTPErrorRatePercent float64
-	VaultTimeoutPercent  float64
-	VaultInflightMax     int64
+	HTTPErrorRatePercent      float64
+	VaultTimeoutPercent       float64
+	VaultInflightMax          int64
+	WarmupSkippedRatioPercent float64
 }
 
 type Alert struct {
@@ -269,6 +270,9 @@ func (m *Metrics) EvaluateAlerts(thresholds AlertThresholds) []Alert {
 	}
 	if thresholds.VaultInflightMax <= 0 {
 		thresholds.VaultInflightMax = 10
+	}
+	if thresholds.WarmupSkippedRatioPercent <= 0 {
+		thresholds.WarmupSkippedRatioPercent = 30
 	}
 
 	m.mu.RLock()
@@ -303,6 +307,16 @@ func (m *Metrics) EvaluateAlerts(thresholds AlertThresholds) []Alert {
 	}
 
 	inflight := float64(m.vaultInflight)
+	warmupProcessed := int64(0)
+	warmupSkipped := int64(0)
+	for _, entry := range m.tenderWarmup {
+		warmupProcessed += entry.Processed
+		warmupSkipped += entry.Skipped
+	}
+	warmupSkippedRatio := 0.0
+	if warmupProcessed > 0 {
+		warmupSkippedRatio = float64(warmupSkipped) * 100 / float64(warmupProcessed)
+	}
 	alerts := []Alert{
 		{
 			Name:        "http_error_rate_high",
@@ -327,6 +341,14 @@ func (m *Metrics) EvaluateAlerts(thresholds AlertThresholds) []Alert {
 			Triggered:   inflight >= float64(thresholds.VaultInflightMax),
 			Value:       inflight,
 			Threshold:   float64(thresholds.VaultInflightMax),
+		},
+		{
+			Name:        "tenders_warmup_skipped_ratio_high",
+			Severity:    "warning",
+			Description: "Warmup skipped ratio is above threshold",
+			Triggered:   warmupSkippedRatio >= thresholds.WarmupSkippedRatioPercent,
+			Value:       warmupSkippedRatio,
+			Threshold:   thresholds.WarmupSkippedRatioPercent,
 		},
 	}
 	return alerts
