@@ -6,7 +6,9 @@ import "../services/nexus_api_client.dart";
 import "../widgets/response_card.dart";
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.client});
+
+  final NexusApiClient? client;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   static const String _jwtTokenKey = "nexus.jwt_token";
   static const String _tenderIdKey = "nexus.tender_id";
 
-  final NexusApiClient _client = const NexusApiClient();
+  NexusApiClient get _client => widget.client ?? const NexusApiClient();
   final TextEditingController _baseUrlController = TextEditingController(
     text: "http://localhost:8080",
   );
@@ -259,8 +261,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 12),
             TextField(
               controller: _tokenController,
-              minLines: 2,
-              maxLines: 3,
+              maxLines: 1,
               obscureText: _obscureToken,
               decoration: InputDecoration(
                 labelText: "JWT_TOKEN (Bearer)",

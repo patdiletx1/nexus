@@ -744,3 +744,21 @@ Registro operativo de sesiones para continuidad entre agentes.
   - Falta cobertura UI widget-level para panel visual de alerts.
 - **Siguiente paso recomendado:**
   - Agregar test de widget para validar render de chips de severidad/estado en `HomePage`.
+
+## 2026-04-14 - Widget test para panel Ops Alerts
+- **Autor agente:** Codex (Cursor)
+- **Contexto:** subir cobertura desde modelo a UI para evitar regresiones visuales del panel operacional.
+- **Cambios principales:**
+  - `HomePage` ahora permite inyectar `NexusApiClient` (testability).
+  - Se agrego widget test de `HomePage` con cliente fake que valida render de chips y orden visual.
+  - Se valida que alerta `critical_triggered` aparezca sobre `warning_not_triggered`.
+- **Archivos clave:**
+  - `frontend/lib/pages/home_page.dart`
+  - `frontend/test/pages/home_page_test.dart`
+- **Validacion:**
+  - `flutter test`
+  - `flutter analyze`
+- **Riesgos/pendientes:**
+  - Faltan tests de interaccion para acciones de `sync/warmup/score`.
+- **Siguiente paso recomendado:**
+  - Agregar suite widget con fakes para flujo end-to-end de botones principales.
